@@ -6,14 +6,12 @@ let channels = new Pusher(PUSHER_APP_KEY, {
     cluster: PUSHER_CLUSTER_REGION,
 });
 
-// Subscribe to the appropriate channel
-let channel = channels.subscribe("channel");
+channels.subscribe("channel");
 
-// Bind a callback function to an event within the subscribed channel
-channel.bind("event", function (data) {
-    console.log("event received: ");
-    console.log(data);
-});
+async function subscribeChannel(code) {
+    // Determine if channel exists
+    // Subscribe to channel
+}
 
 async function pushData(data) {
     const res = await fetch("/api/channels-event", {

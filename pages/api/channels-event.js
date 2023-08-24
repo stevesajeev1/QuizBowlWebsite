@@ -13,12 +13,14 @@ const channels = new Channels({
 });
 
 module.exports = (req, res) => {
+    const data = req.body;
     return new Promise((resolve, reject) => {
-        const data = req.body;
         channels.trigger("channel", "event", data, () => {
+            res.status(200).end("sent event successfully");
             resolve();
         }).catch(error => {
-            reject();
+            res.status(500).end();
+            resolve();
         });
     });
 };

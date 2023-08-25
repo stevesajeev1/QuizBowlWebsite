@@ -45,6 +45,7 @@
   color: var(--bg);
   font-size: 40px;
   margin: 20px;
+  text-decoration: none;
 }
 
 .button:hover {

@@ -3,14 +3,11 @@ const PUSHER_CLUSTER_REGION = "us2";
 
 // Initialize Channels client
 let channels = new Pusher(PUSHER_APP_KEY, {
-    cluster: PUSHER_CLUSTER_REGION,
+    cluster: PUSHER_CLUSTER_REGION
 });
 
-channels.subscribe("channel");
-
-async function subscribeChannel(code) {
-    // Determine if channel exists
-    // Subscribe to channel
+function hostChannel(code) {
+    channels.subscribe(code);
 }
 
 async function pushData(data) {

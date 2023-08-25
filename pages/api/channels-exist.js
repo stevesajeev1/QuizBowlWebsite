@@ -13,17 +13,17 @@ const channels = new Channels({
 });
 
 module.exports = (req, res) => {
-    const data = req.body;
+    const code = req.body;
     return new Promise((resolve, reject) => {
-        channels
-            .trigger("channel", "event", data)
-            .then(() => {
+        channels.get({ path: "/channels", params: {} })
+        .then(response => response.json())
+        .then(body => {
+            if (code in body.channels) {
                 res.status(200).end();
-                resolve();
-            })
-            .catch(() => {
+            } else {
                 res.status(500).end();
-                resolve();
-            });
+            }
+            resolve();
+        });
     });
 };

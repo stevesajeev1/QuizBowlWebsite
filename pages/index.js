@@ -15,13 +15,13 @@ const raleway = Raleway({
 
 export default function Home() {
     return (
-        <div className={styles.container}>
+        <div className="container">
             <Head>
                 <title>Quiz Bowl Buzzer</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <div className={styles.background}></div>
+            <div className="background"></div>
 
             <h1 className={`${domine.className} ${styles.header}`}>
                 Quiz Bowl Buzzer

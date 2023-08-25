@@ -2,7 +2,9 @@ import Head from "next/head";
 import styles from "../styles/Create.module.css";
 import { Domine, Raleway, Martian_Mono } from "next/font/google";
 import { useRef } from "react";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 
 const domine = Domine({
     subsets: ["latin"],
@@ -41,31 +43,43 @@ export default function Create() {
         }
 
         // Determine if game with code already exists
-        const exists = await fetch('/api/channels-exist', {
+        const exists = await fetch("/api/channels-exist", {
             method: "POST",
             headers: {
                 "Content-Type": "text/plain",
             },
             body: code,
         });
-    
-        if (exists.ok) { // Game with code already exists
-            codeRef.current.setCustomValidity("A game with this code is already in use!");
+
+        if (exists.ok) {
+            // Game with code already exists
+            codeRef.current.setCustomValidity(
+                "A game with this code is already in use!"
+            );
             codeRef.current.reportValidity();
             return;
-        } else { // Create game
+        } else {
+            // Create game
             router.push(`/host/${code}`);
         }
-    }
+    };
 
     return (
-        <div className={styles.container}>
+        <div className="container">
             <Head>
-                <title>Quiz Bowl Buzzer</title>
+                <title>Create Game</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <div className={styles.background}></div>
+            <div className="background"></div>
+            <Link href="/">
+                <Image
+                    className="logo"
+                    src="/logo.png"
+                    width={110}
+                    height={110}
+                />
+            </Link>
 
             <h1 className={`${domine.className} ${styles.header}`}>
                 Create Game

@@ -1,0 +1,10 @@
+.container {
+    justify-content: center;
+    align-items: center;
+}
+
+.message {
+    color: var(--text);
+    font-size: 80px;
+    text-align: center;
+}

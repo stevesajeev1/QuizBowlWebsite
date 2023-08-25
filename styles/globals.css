@@ -1,7 +1,7 @@
 :root {
-  --bg: #000000;
-  --accent: #FF7B00;
-  --text: #FFFFFF;
+    --bg: #333333;
+    --accent: #ff7b00;
+    --text: #ffffff;
 }
 
 * {
@@ -15,4 +15,40 @@ body,
 #__next {
     height: 100%;
     width: 100%;
+}
+
+.container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.background {
+    position: absolute;
+    inset: 0;
+    background-color: #000000;
+    opacity: 0.8;
+    background-image: radial-gradient(var(--accent) 0.9px, transparent 0.9px),
+        radial-gradient(var(--accent) 0.9px, #000000 0.9px);
+    background-size: 36px 36px;
+    background-position: 0 0, 18px 18px;
+    z-index: -1;
+}
+
+.logo {
+    position: absolute;
+    left: 40px;
+    top: 20px;
+    padding: 10px;
+    background-color: var(--bg);
+    border: 1px solid var(--accent);
+    border-radius: 20px;
+}
+
+.logo:hover {
+    cursor: pointer;
+    box-shadow: 0 0 20px 1px var(--accent);
 }

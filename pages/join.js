@@ -3,6 +3,8 @@ import styles from "../styles/Join.module.css";
 import { Domine, Raleway, Martian_Mono } from "next/font/google";
 import { useRef } from "react";
 import { useRouter } from 'next/navigation'
+import Image from "next/image";
+import Link from "next/link";
 
 const domine = Domine({
     subsets: ["latin"],
@@ -51,13 +53,21 @@ export default function Join() {
     };
 
     return (
-        <div className={styles.container}>
+        <div className="container">
             <Head>
-                <title>Quiz Bowl Buzzer</title>
+                <title>Join Game</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <div className={styles.background}></div>
+            <div className="background"></div>
+            <Link href="/">
+                <Image
+                    className="logo"
+                    src="/logo.png"
+                    width={110}
+                    height={110}
+                />
+            </Link>
 
             <h1 className={`${domine.className} ${styles.header}`}>
                 Join Game

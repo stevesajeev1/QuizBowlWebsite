@@ -31,7 +31,7 @@ export async function middleware(request) {
     // Get the id
     const { code } = params(request.url);
 
-    const baseURL = new URL(request.url).origin;
+    const baseURL = process.env.VERCEL_URL;
 
     const exists = await fetch(`${baseURL}/api/channels-exist`, {
         method: "POST",

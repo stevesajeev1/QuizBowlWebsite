@@ -26,7 +26,7 @@ export default function Page() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <Script src="https://js.pusher.com/8.0.1/pusher.min.js" strategy="beforeInteractive"></Script>
+            <Script src="https://js.pusher.com/8.0.1/pusher.min.js" strategy="afterInteractive"></Script>
             <Script src="/pusher.js" strategy="afterInteractive" onLoad={handleScriptLoad}></Script>
 
             <h1>Hosting</h1>

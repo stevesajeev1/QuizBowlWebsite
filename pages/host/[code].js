@@ -7,6 +7,7 @@ export default function Page() {
     const router = useRouter();
 
     const [code, setCode] = useState("");
+    const [scriptLoaded, setScriptLoaded] = useState(false);
 
     useEffect(() => {
         if (!router.isReady) return;
@@ -15,9 +16,11 @@ export default function Page() {
         setCode(code);
     }, [router.isReady]);
 
-    const handleScriptLoad = () => {
-        hostChannel(code);
-    }
+    useEffect(() => {
+        if (scriptLoaded && code) {
+            hostChannel(code);
+        }
+    }, [code, scriptLoaded]);
 
     return (
         <>
@@ -26,8 +29,17 @@ export default function Page() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <Script src="https://js.pusher.com/8.0.1/pusher.min.js" strategy="afterInteractive"></Script>
-            <Script src="/pusher.js" strategy="afterInteractive" onLoad={handleScriptLoad}></Script>
+            <Script
+                src="https://js.pusher.com/8.0.1/pusher.min.js"
+                strategy="afterInteractive"
+            ></Script>
+            <Script
+                src="/pusher.js"
+                strategy="afterInteractive"
+                onLoad={() => {
+                    setScriptLoaded(true);
+                }}
+            ></Script>
 
             <h1>Hosting</h1>
             <p>Game: {code}</p>

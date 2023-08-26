@@ -1,5 +1,5 @@
 const Channels = require("pusher");
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
 const PUSHER_APP_ID = process.env.PUSHER_APP_ID;
 const PUSHER_APP_KEY = process.env.PUSHER_APP_KEY;
@@ -20,17 +20,21 @@ module.exports = (req, res) => {
         const channel = data.channel_name;
 
         const user_info = {
-            isHost: (data.host === "true"),
-            isSpectating: (data.spectating === "true"),
-            nickname: data.nickname
-        }
+            isHost: data.host === "true",
+            isSpectating: data.spectating === "true",
+            nickname: data.nickname,
+        };
 
         const presenceData = {
             user_id: uuidv4(),
-            user_info: user_info
-        }
+            user_info: user_info,
+        };
 
-        const authResponse = channels.authorizeChannel(socketID, channel, presenceData);
+        const authResponse = channels.authorizeChannel(
+            socketID,
+            channel,
+            presenceData
+        );
         res.send(authResponse);
         resolve();
     });

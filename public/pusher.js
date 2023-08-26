@@ -1,8 +1,6 @@
 const PUSHER_APP_KEY = "ff3e08947915317eaddc";
 const PUSHER_CLUSTER_REGION = "us2";
 
-console.log("Pusher loaded");
-
 // Channels client
 let channels;
 let channel;
@@ -46,7 +44,10 @@ async function nicknameInUse(code, nickname) {
             const membersObject = members.members;
             for (const memberKey in membersObject) {
                 const member = membersObject[memberKey];
-                if (!(member.isHost || member.isSpectating) && nickname == member.nickname) {
+                if (
+                    !(member.isHost || member.isSpectating) &&
+                    nickname == member.nickname
+                ) {
                     console.log("Same nickname");
                     resolve(true);
                 }

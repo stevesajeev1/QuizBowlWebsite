@@ -100,7 +100,7 @@ export default function Create() {
                 className={`${raleway.className} ${styles.button} ${styles.joinButton}`}
                 onClick={handleCreate}
             >
-                JOIN
+                CREATE
             </div>
         </div>
     );

@@ -28,7 +28,9 @@ export default function Custom404() {
                 />
             </Link>
 
-            <h1 className={`${raleway.className} ${styles.message}`}>404 - Page/Game Not Found</h1>
+            <h1 className={`${raleway.className} ${styles.message}`}>
+                404 - Page/Game Not Found
+            </h1>
         </div>
-    )
+    );
 }

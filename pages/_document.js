@@ -12,10 +12,7 @@ export default function Document() {
                     src="https://js.pusher.com/8.0.1/pusher.min.js"
                     strategy="beforeInteractive"
                 ></Script>
-                <Script
-                    src="/pusher.js"
-                    strategy="beforeInteractive"
-                ></Script>
+                <Script src="/pusher.js" strategy="beforeInteractive"></Script>
             </body>
         </Html>
     );

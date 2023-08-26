@@ -15,15 +15,16 @@ const channels = new Channels({
 module.exports = (req, res) => {
     const code = req.body;
     return new Promise((resolve, reject) => {
-        channels.get({ path: "/channels", params: {} })
-        .then(response => response.json())
-        .then(body => {
-            if (`presence-${code}` in body.channels) {
-                res.status(200).end();
-            } else {
-                res.status(500).end();
-            }
-            resolve();
-        });
+        channels
+            .get({ path: "/channels", params: {} })
+            .then((response) => response.json())
+            .then((body) => {
+                if (`presence-${code}` in body.channels) {
+                    res.status(200).end();
+                } else {
+                    res.status(500).end();
+                }
+                resolve();
+            });
     });
 };

@@ -1,34 +1,34 @@
 .header {
-  font-size: 100px;
-  color: var(--text);
-  text-shadow: 1px 5px 10px var(--accent);
-  margin-top: 20px;
-  text-align: center;
+    font-size: 100px;
+    color: var(--text);
+    text-shadow: 1px 5px 10px var(--accent);
+    margin-top: 20px;
+    text-align: center;
 }
 
 .header:hover {
-  cursor: default;
+    cursor: default;
 }
 
 .spacer {
-  flex: 1;
+    flex: 1;
 }
 
 .button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40%;
-  height: 60px;
-  background-color: var(--text);
-  opacity: 0.9;
-  color: #000000;
-  font-size: 40px;
-  margin: 20px;
-  text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40%;
+    height: 60px;
+    background-color: var(--text);
+    opacity: 0.9;
+    color: #000000;
+    font-size: 40px;
+    margin: 20px;
+    text-decoration: none;
 }
 
 .button:hover {
-  cursor: pointer;
-  box-shadow: 0 0 10px 3px var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 10px 3px var(--accent);
 }

@@ -14,7 +14,8 @@
     flex: 1;
 }
 
-.button, .inputContainer {
+.button,
+.inputContainer {
     display: flex;
     gap: 20px;
     align-items: center;
@@ -31,18 +32,18 @@
 }
 
 .inputContainer > input {
-  flex: 1;
-  height: 80%;
-  border: 3px solid var(--accent);
-  border-radius: 10px;
-  padding-inline: 5px;
-  color: #000000;
-  font-size: 20px;
-  line-height: 0.9;
+    flex: 1;
+    height: 80%;
+    border: 3px solid var(--accent);
+    border-radius: 10px;
+    padding-inline: 5px;
+    color: #000000;
+    font-size: 20px;
+    line-height: 0.9;
 }
 
 .inputContainer > input:focus {
-  outline: none;
+    outline: none;
 }
 
 .button:hover {
@@ -51,5 +52,5 @@
 }
 
 .joinButton {
-  margin-bottom: 100px;
+    margin-bottom: 100px;
 }

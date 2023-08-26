@@ -2,7 +2,7 @@ import Head from "next/head";
 import styles from "../styles/Join.module.css";
 import { Domine, Raleway, Martian_Mono } from "next/font/google";
 import { useRef } from "react";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -59,7 +59,9 @@ export default function Join() {
 
         if (!codeExists.ok) {
             // Code does not exist
-            codeRef.current.setCustomValidity("A game with this code does not exist!");
+            codeRef.current.setCustomValidity(
+                "A game with this code does not exist!"
+            );
             codeRef.current.reportValidity();
             return;
         }
@@ -68,16 +70,18 @@ export default function Join() {
 
         if (nicknameExists) {
             // Nickname in use
-            nicknameRef.current.setCustomValidity("This nickname is already in use in this game!");
+            nicknameRef.current.setCustomValidity(
+                "This nickname is already in use in this game!"
+            );
             nicknameRef.current.reportValidity();
             return;
         }
-        
+
         router.push({
             pathname: `/game/${code}`,
             query: {
-                nickname: nickname
-            }
+                nickname: nickname,
+            },
         });
     };
 

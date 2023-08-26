@@ -78,6 +78,7 @@ export default function Create() {
                     src="/logo.png"
                     width={110}
                     height={110}
+                    alt="Logo"
                 />
             </Link>
 

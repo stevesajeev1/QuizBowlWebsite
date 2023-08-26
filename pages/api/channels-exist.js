@@ -18,7 +18,7 @@ module.exports = (req, res) => {
         channels.get({ path: "/channels", params: {} })
         .then(response => response.json())
         .then(body => {
-            if (code in body.channels) {
+            if (`presence-${code}` in body.channels) {
                 res.status(200).end();
             } else {
                 res.status(500).end();

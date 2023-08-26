@@ -24,6 +24,7 @@ export default function Custom404() {
                     src="/logo.png"
                     width={110}
                     height={110}
+                    alt="Logo"
                 />
             </Link>
 

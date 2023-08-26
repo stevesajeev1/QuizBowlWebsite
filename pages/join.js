@@ -48,8 +48,37 @@ export default function Join() {
             nicknameRef.current.reportValidity();
             return;
         }
-        // Navigate to game page
-        router.push(`/game/${code}`);
+        // Determine if game with code exists
+        const codeExists = await fetch("/api/channels-exist", {
+            method: "POST",
+            headers: {
+                "Content-Type": "text/plain",
+            },
+            body: code,
+        });
+
+        if (!codeExists.ok) {
+            // Code does not exist
+            codeRef.current.setCustomValidity("A game with this code does not exist!");
+            codeRef.current.reportValidity();
+            return;
+        }
+
+        const nicknameExists = await nicknameInUse(code, nickname);
+
+        if (nicknameExists) {
+            // Nickname in use
+            nicknameRef.current.setCustomValidity("This nickname is already in use in this game!");
+            nicknameRef.current.reportValidity();
+            return;
+        }
+        
+        router.push({
+            pathname: `/game/${code}`,
+            query: {
+                nickname: nickname
+            }
+        });
     };
 
     return (
@@ -66,6 +95,7 @@ export default function Join() {
                     src="/logo.png"
                     width={110}
                     height={110}
+                    alt="Logo"
                 />
             </Link>
 

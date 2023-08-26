@@ -6,12 +6,17 @@ export default function Page() {
     const router = useRouter();
 
     const [code, setCode] = useState("");
+    const [nickname, setNickname] = useState("");
 
     useEffect(() => {
         if (!router.isReady) return;
 
         const code = router.query.code;
         setCode(code);
+        const nickname = router.query.nickname;
+        setNickname(nickname);
+
+        joinChannel(code, nickname);
     }, [router.isReady]);
 
     return (
@@ -20,8 +25,10 @@ export default function Page() {
                 <title>Quiz Bowl Buzzer</title>
                 <link rel="icon" href="/favicon.ico" />
             </Head>
+
             <h1>Regular</h1>
             <p>Game: {code}</p>
+            <p>Nickname: {nickname}</p>
         </>
     );
 }

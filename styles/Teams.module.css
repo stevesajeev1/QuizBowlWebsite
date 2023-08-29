@@ -1,0 +1,82 @@
+.teamsContainer {
+    width: 30%;
+    height: 100%;
+    border-left: 3px solid var(--accent);
+    overflow-y: auto;
+}
+
+.teamsContainer::-webkit-scrollbar {
+    background-color: var(--off-white);
+    width: 7px;
+}
+
+.teamsContainer::-webkit-scrollbar-thumb {
+    background-color: var(--bg);
+    border-radius: 5px;
+}
+
+.teamsHeader {
+    text-align: center;
+    margin: 10px 0;
+}
+
+.team {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin-top: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: var(--off-white);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.teamName {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 18px;
+    margin-bottom: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.kick:hover {
+    cursor: pointer;
+}
+
+.teamStats {
+    display: flex;
+}
+
+.teamScore {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 30px;
+    border: 5px solid var(--accent);
+    margin-right: 10px;
+}
+
+.teamScoreHost:hover {
+    cursor: pointer;
+}
+
+.round {
+    font-size: 15px;
+    text-align: end;
+}
+
+.correct {
+    color: limegreen;
+    font-weight: bold;
+}
+
+.incorrect {
+    color: red;
+    font-weight: bold;
+}

@@ -2,6 +2,7 @@
     --bg: #333333;
     --accent: #ff7b00;
     --text: #ffffff;
+    --off-white: rgba(234, 233, 233, 0.95);
 }
 
 * {

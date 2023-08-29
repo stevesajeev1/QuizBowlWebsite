@@ -1,0 +1,35 @@
+.hostContainer {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--off-white);
+    width: 90%;
+    height: 85%;
+    margin: auto 0;
+}
+
+.code {
+    font-weight: normal;
+    text-align: center;
+    font-size: 50px;
+    margin-top: 20px;
+}
+
+.line {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 3px solid var(--accent);
+    padding: 0;
+    margin-top: 20px;
+}
+
+.mainContainer {
+    flex: 1;
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+}
+
+.settingsContainer {
+    flex: 1;
+}

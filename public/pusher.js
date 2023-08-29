@@ -5,7 +5,7 @@ const PUSHER_CLUSTER_REGION = "us2";
 let channels;
 let channel;
 
-function hostChannel(code) {
+function hostChannel(code, teamJoinCallback, teamLeaveCallback) {
     // Initialize host client
     channels = new Pusher(PUSHER_APP_KEY, {
         cluster: PUSHER_CLUSTER_REGION,
@@ -20,7 +20,15 @@ function hostChannel(code) {
     });
 
     channel = channels.subscribe(`presence-${code}`);
-    console.log(channel);
+    
+    // Listen for member add
+    channel.bind("pusher:member_added", (member) => {
+        teamJoinCallback(member);
+    });
+    // listen for member leave
+    channel.bind("pusher:member_removed", (member) => {
+        teamLeaveCallback(member);
+    });
 }
 
 async function nicknameInUse(code, nickname) {
@@ -48,7 +56,6 @@ async function nicknameInUse(code, nickname) {
                     !(member.isHost || member.isSpectating) &&
                     nickname == member.nickname
                 ) {
-                    console.log("Same nickname");
                     resolve(true);
                 }
             }
@@ -57,8 +64,7 @@ async function nicknameInUse(code, nickname) {
     });
 }
 
-function joinChannel(code, nickname) {
-    console.log("Join channel");
+function joinChannel(code, nickname, updateCallback, kickCallback) {
     // Initialize regular client
     channels = new Pusher(PUSHER_APP_KEY, {
         cluster: PUSHER_CLUSTER_REGION,
@@ -73,18 +79,20 @@ function joinChannel(code, nickname) {
     });
 
     channel = channels.subscribe(`presence-${code}`);
-    console.log(channel);
+
+    // Listen for update from host
+    channel.bind("client-update", (data) => {
+        updateCallback(data);
+    });
+
+    channel.bind("client-kick", teamID => {
+        if (teamID == channel.members.me.id) {
+            channels.disconnect();
+            kickCallback();
+        }
+    });
 }
 
-async function pushData(data) {
-    const res = await fetch("/api/channels-event", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-        console.error("failed to push data");
-    }
+async function triggerEvent(event, data) {
+    channel.trigger(`client-${event}`, data);
 }

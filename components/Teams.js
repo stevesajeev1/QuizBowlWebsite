@@ -20,7 +20,7 @@ const martian_mono = Martian_Mono({
 function Teams(props) {
     const teams = props.teams;
     teams.sort((a, b) => {
-        return new Date(b.joinTime) - new Date(a.joinTime);
+        return new Date(a.joinTime) - new Date(b.joinTime);
     });
 
     const overrideScore = (teamID) => {

@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
@@ -18,6 +18,9 @@ export default function Host() {
     const [code, setCode] = useState("");
     const [teams, setTeams] = useState([]);
 
+    const teamsRef = useRef();
+    teamsRef.current = teams;
+
     const teamJoin = (team) => {
         const teamInfo = team.info;
         teamInfo.id = team.id;
@@ -34,7 +37,7 @@ export default function Host() {
         };
 
         if (!(teamInfo.isHost || teamInfo.isSpectating)) {
-            const newTeams = [...teams, teamInfo];
+            const newTeams = [...teamsRef.current, teamInfo];
             setTeams(newTeams);
             triggerEvent("update", newTeams);
         }
@@ -43,7 +46,7 @@ export default function Host() {
     const teamLeave = (team) => {
         const teamInfo = team.info;
         if (!(teamInfo.isHost || teamInfo.isSpectating)) {
-            const newTeams = [...teams];
+            const newTeams = [...teamsRef.current];
             newTeams.splice(
                 newTeams.findIndex((t) => t.id == team.id),
                 1
@@ -62,7 +65,7 @@ export default function Host() {
         newScore.totalScore = newTotalScore;
         newTeam.score = newScore;
 
-        const newTeams = [...teams];
+        const newTeams = [...teamsRef.current];
         newTeams[team] = newTeam;
 
         setTeams(newTeams);
@@ -71,14 +74,6 @@ export default function Host() {
 
     const kickTeam = (teamID) => {
         triggerEvent("kick", teamID);
-
-        const newTeams = [...teams];
-        newTeams.splice(
-            newTeams.findIndex((t) => t.id == teamID),
-            1
-        );
-        setTeams(newTeams);
-        triggerEvent("update", newTeams);
     };
 
     useEffect(() => {

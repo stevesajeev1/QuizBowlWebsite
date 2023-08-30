@@ -37,13 +37,6 @@ export default function Game() {
 
     const timerInterval = useRef();
 
-    const memberLeave = (member) => {
-        const memberInfo = member.info;
-        if (memberInfo.isHost) {
-            kick();
-        }
-    };
-
     const gameUpdate = (updatedInfo) => {
         setTeams(updatedInfo.teams);
         setRound(updatedInfo.round);
@@ -54,7 +47,7 @@ export default function Game() {
     };
 
     const kick = () => {
-        router.push("/");
+        router.replace("/");
     };
 
     const startTimer = () => {
@@ -97,7 +90,6 @@ export default function Game() {
         joinChannel(
             code,
             nickname,
-            memberLeave,
             gameUpdate,
             kick,
             startTimer,

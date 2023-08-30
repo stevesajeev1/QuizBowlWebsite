@@ -67,7 +67,6 @@ async function nicknameInUse(code, nickname) {
 function joinChannel(
     code,
     nickname,
-    memberLeaveCallback,
     updateCallback,
     kickCallback,
     startTimerCallback,
@@ -119,7 +118,14 @@ function joinChannel(
 
     // listen for member leave
     channel.bind("pusher:member_removed", (member) => {
-        memberLeaveCallback(member);
+        const memberInfo = member.info;
+        if (memberInfo.isHost) {
+            channels.unsubscribe(`presence-${code}`);
+            channels.disconnect();
+            channels = null;
+            channel = null;
+            kickCallback();
+        }
     });
 }
 

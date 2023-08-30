@@ -115,6 +115,9 @@ export default function Join() {
                 <input
                     className={`${martianMono.className}`}
                     ref={codeRef}
+                    onKeyDown={(e) => {
+                        e.key == "Enter" && handleJoin()
+                    }}
                 ></input>
             </div>
             <div className={`${raleway.className} ${styles.inputContainer}`}>
@@ -122,6 +125,9 @@ export default function Join() {
                 <input
                     className={`${martianMono.className}`}
                     ref={nicknameRef}
+                    onKeyDown={(e) => {
+                        e.key == "Enter" && handleJoin()
+                    }}
                 ></input>
             </div>
             <div className={styles.spacer}></div>

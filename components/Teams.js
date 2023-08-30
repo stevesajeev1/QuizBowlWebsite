@@ -18,10 +18,12 @@ const martian_mono = Martian_Mono({
 });
 
 function Teams(props) {
-    const teams = props.teams;
+    const teams = JSON.parse(JSON.stringify(props.teams));
+
+    const teamNumbers = Object.fromEntries(teams.map((t, index) => [t.id, index + 1]));
 
     teams.sort((a, b) => {
-        return new Date(a.joinTime) - new Date(b.joinTime);
+        return b.score.totalScore - a.score.totalScore;
     });
 
     const overrideScore = (teamID) => {
@@ -42,13 +44,13 @@ function Teams(props) {
             <h1 className={`${domine.className} ${styles.teamsHeader}`}>
                 TEAMS
             </h1>
-            {teams.map((team, key) => (
+            {teams.map(team => (
                 <li
                     key={team.id}
                     className={`${raleway.className} ${styles.team}`}
                 >
                     <div className={styles.teamName}>
-                        Team {key + 1}: <strong>{team.nickname}</strong>
+                        Team {teamNumbers[team.id]}: <strong>{team.nickname}</strong>
                         {props.host && (
                             <Image
                                 className={styles.kick}

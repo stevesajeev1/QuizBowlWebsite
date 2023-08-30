@@ -92,6 +92,9 @@ export default function Create() {
                 <input
                     className={`${martianMono.className}`}
                     ref={codeRef}
+                    onKeyDown={(e) => {
+                        e.key == "Enter" && handleCreate()
+                    }}
                 ></input>
             </div>
             <div className={styles.spacer}></div>

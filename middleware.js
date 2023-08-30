@@ -4,11 +4,7 @@ import { NextResponse } from "next/server";
 // Gets the code from dynamic path
 const PATTERNS = [
     [
-        new URLPattern({ pathname: "/game/:code" }),
-        ({ pathname }) => pathname.groups,
-    ],
-    [
-        new URLPattern({ pathname: "/host/:code" }),
+        new URLPattern({ pathname: "/game/:code*" }),
         ({ pathname }) => pathname.groups,
     ],
 ];
@@ -24,12 +20,18 @@ const params = (url) => {
             break;
         }
     }
+
+    const searchParams = new URLSearchParams(url.split("?")[1]);
+    for (const [key, value] of searchParams.entries()) {
+        result[key] = value;
+    }
+
     return result;
 };
 
 export async function middleware(request) {
-    // Get the id
-    const { code } = params(request.url);
+    // Get the id and nickname param
+    const { code, nickname } = params(request.url);
 
     const baseURL = new URL(request.url).origin;
 
@@ -41,13 +43,15 @@ export async function middleware(request) {
         body: code,
     });
 
-    if (exists.ok) { // Valid code
+    if (exists.ok && nickname) {
+        // Valid code
         return NextResponse.next();
-    } else { // Not a valid code
+    } else {
+        // Not a valid code
         return NextResponse.redirect(new URL("/404", request.url));
     }
 }
 
 export const config = {
-    matcher: ["/game/:code"],
+    matcher: ["/game/:code*"],
 };

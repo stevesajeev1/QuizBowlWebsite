@@ -64,6 +64,7 @@
 
 .teamScoreHost:hover {
     cursor: pointer;
+    text-shadow: 0 0 20px var(--accent);
 }
 
 .round {

@@ -29,7 +29,7 @@ export default function Custom404() {
             </Link>
 
             <h1 className={`${raleway.className} ${styles.message}`}>
-                404 - Page/Game Not Found
+                404 - Page Not Found
             </h1>
         </div>
     );

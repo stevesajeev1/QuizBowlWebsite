@@ -1,0 +1,24 @@
+.buttons {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-evenly;
+    gap: 10px;
+}
+
+.button {
+    background-color: var(--accent);
+    padding: 10px;
+    border-radius: 15px;
+    font-weight: bold;
+    color: black;
+}
+
+.button:hover {
+    cursor: pointer;
+    background-color: var(--dark-accent);
+}
+
+.button.selected {
+    background-color: var(--dark-accent);
+}

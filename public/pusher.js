@@ -20,7 +20,7 @@ function hostChannel(code, teamJoinCallback, teamLeaveCallback) {
     });
 
     channel = channels.subscribe(`presence-${code}`);
-    
+
     // Listen for member add
     channel.bind("pusher:member_added", (member) => {
         teamJoinCallback(member);
@@ -64,7 +64,16 @@ async function nicknameInUse(code, nickname) {
     });
 }
 
-function joinChannel(code, nickname, updateCallback, kickCallback) {
+function joinChannel(
+    code,
+    nickname,
+    memberLeaveCallback,
+    updateCallback,
+    kickCallback,
+    startTimerCallback,
+    pauseTimerCallback,
+    resetTimerCallback
+) {
     // Initialize regular client
     channels = new Pusher(PUSHER_APP_KEY, {
         cluster: PUSHER_CLUSTER_REGION,
@@ -85,11 +94,32 @@ function joinChannel(code, nickname, updateCallback, kickCallback) {
         updateCallback(data);
     });
 
-    channel.bind("client-kick", teamID => {
+    // listen for event to disconnect
+    channel.bind("client-kick", (teamID) => {
         if (teamID == channel.members.me.id) {
             channels.disconnect();
             kickCallback();
         }
+    });
+
+    // listen for timer events
+    channel.bind("client-timer", (eventType) => {
+        switch (eventType) {
+            case "start":
+                startTimerCallback();
+                break;
+            case "pause":
+                pauseTimerCallback();
+                break;
+            case "reset":
+                resetTimerCallback();
+                break;
+        }
+    });
+
+    // listen for member leave
+    channel.bind("pusher:member_removed", (member) => {
+        memberLeaveCallback(member);
     });
 }
 

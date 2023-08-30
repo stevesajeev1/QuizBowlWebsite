@@ -22,6 +22,11 @@
 
 .button:hover {
     cursor: pointer;
+    background-color: var(--light-bg);
+}
+
+.pause {
+    background-color: var(--light-bg);
 }
 
 .timer {

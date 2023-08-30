@@ -24,13 +24,16 @@ export default function Host() {
     const [timer, setTimer] = useState(60);
     const [timerStarted, setTimerStarted] = useState(false);
 
+    const roundRef = useRef();
+    roundRef.current = round;
+
     const teamsRef = useRef();
     teamsRef.current = teams;
 
     const timerRef = useRef();
     timerRef.current = timer;
 
-    const timerInterval = useRef();
+    const timerWorkerRef = useRef();
 
     const teamJoin = (team) => {
         const teamInfo = team.info;
@@ -51,7 +54,7 @@ export default function Host() {
             const newTeams = [...teamsRef.current, teamInfo];
             setTeams(newTeams);
             triggerEvent("update", {
-                round: round,
+                round: roundRef.current,
                 teams: newTeams,
                 timer: initialTimer,
             });
@@ -68,7 +71,7 @@ export default function Host() {
             );
             setTeams(newTeams);
             triggerEvent("update", {
-                round: round,
+                round: roundRef.current,
                 teams: newTeams,
                 timer: initialTimer,
             });
@@ -89,7 +92,7 @@ export default function Host() {
 
         setTeams(newTeams);
         triggerEvent("update", {
-            round: round,
+            round: roundRef.current,
             teams: newTeams,
             timer: initialTimer,
         });
@@ -118,7 +121,7 @@ export default function Host() {
         setTimer(newTime);
         setTimerStarted(false);
         triggerEvent("update", {
-            round: round,
+            round: roundRef.current,
             teams: teams,
             timer: newTime,
         });
@@ -127,28 +130,19 @@ export default function Host() {
     const startTimer = () => {
         triggerEvent("timer", "start");
         setTimerStarted(true);
-        timerInterval.current = setInterval(() => {
-            const newTime = Math.round((timerRef.current - 0.1) * 10) / 10;
-            if (newTime < 0) {
-                clearInterval(timerInterval.current);
-                timerInterval.current = null;
-                endTimer();
-            } else {
-                setTimer(newTime);
-            }
-        }, 100);
+        timerWorkerRef.current?.postMessage("start");
     };
 
     const pauseTimer = () => {
         triggerEvent("timer", "pause");
         setTimerStarted(false);
-        clearInterval(timerInterval.current);
-        timerInterval.current = null;
+        timerWorkerRef.current?.postMessage("end");
     };
 
     const resetTimer = () => {
         setTimer(initialTimer);
         triggerEvent("timer", "reset");
+        timerWorkerRef.current?.postMessage("end");
     };
 
     const endTimer = () => {};
@@ -160,6 +154,20 @@ export default function Host() {
         setCode(code);
 
         hostChannel(code, teamJoin, teamLeave);
+
+        timerWorkerRef.current = new Worker(new URL("../../timerWorker.js", import.meta.url));
+        timerWorkerRef.current.onmessage = () => {
+            const newTime = Math.round((timerRef.current - 0.1) * 10) / 10;
+            if (newTime < 0) {
+                timerWorkerRef.postMessage("end");
+                endTimer();
+            } else {
+                setTimer(newTime);
+            }
+        };
+        return () => {
+            timerWorkerRef.current?.terminate();
+        }
     }, [router.isReady]);
 
     return (

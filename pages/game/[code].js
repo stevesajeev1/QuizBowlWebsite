@@ -3,17 +3,12 @@ import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import { Domine, Raleway } from "next/font/google";
+import { Raleway } from "next/font/google";
 import Teams from "../../components/Teams";
 import styles from "../../styles/Game.module.css";
 import Timer from "../../components/Timer";
 
 const raleway = Raleway({
-    subsets: ["latin"],
-    display: "swap",
-});
-
-const domine = Domine({
     subsets: ["latin"],
     display: "swap",
 });
@@ -35,7 +30,7 @@ export default function Game() {
     const timerRef = useRef();
     timerRef.current = timer;
 
-    const timerInterval = useRef();
+    const timerWorkerRef = useRef();
 
     const gameUpdate = (updatedInfo) => {
         setTeams(updatedInfo.teams);
@@ -52,29 +47,18 @@ export default function Game() {
 
     const startTimer = () => {
         setTimerStarted(true);
-        timerInterval.current = setInterval(() => {
-            const newTime = Math.round((timerRef.current - 0.1) * 10) / 10;
-            if (newTime < 0) {
-                clearInterval(timerInterval.current);
-                timerInterval.current = null;
-                endTimer();
-            } else {
-                setTimer(newTime);
-            }
-        }, 100);
+        timerWorkerRef.current?.postMessage("start");
     };
 
     const pauseTimer = () => {
         setTimerStarted(false);
-        clearInterval(timerInterval.current);
-        timerInterval.current = null;
+        timerWorkerRef.current?.postMessage("end");
     };
 
     const resetTimer = () => {
         setTimer(initialTimerRef.current);
         setTimerStarted(false);
-        clearInterval(timerInterval.current);
-        timerInterval.current = null;
+        timerWorkerRef.current?.postMessage("end");
     };
 
     const endTimer = () => {};
@@ -96,6 +80,20 @@ export default function Game() {
             pauseTimer,
             resetTimer
         );
+
+        timerWorkerRef.current = new Worker(new URL("../../timerWorker.js", import.meta.url));
+        timerWorkerRef.current.onmessage = () => {
+            const newTime = Math.round((timerRef.current - 0.1) * 10) / 10;
+            if (newTime < 0) {
+                timerWorkerRef.postMessage("end");
+                endTimer();
+            } else {
+                setTimer(newTime);
+            }
+        };
+        return () => {
+            timerWorkerRef.current?.terminate();
+        }
     }, [router.isReady]);
 
     return (
@@ -134,7 +132,7 @@ export default function Game() {
                         {round && (
                             <>
                                 <Timer
-                                    host={true}
+                                    host={false}
                                     time={timer}
                                     started={timerStarted}
                                 />

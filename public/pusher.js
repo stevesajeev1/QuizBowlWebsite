@@ -5,7 +5,7 @@ const PUSHER_CLUSTER_REGION = "us2";
 let channels;
 let channel;
 
-function hostChannel(code, teamJoinCallback, teamLeaveCallback) {
+function hostChannel(code, teamJoinCallback, teamLeaveCallback, buzzCallback) {
     // Initialize host client
     channels = new Pusher(PUSHER_APP_KEY, {
         cluster: PUSHER_CLUSTER_REGION,
@@ -28,6 +28,11 @@ function hostChannel(code, teamJoinCallback, teamLeaveCallback) {
     // listen for member leave
     channel.bind("pusher:member_removed", (member) => {
         teamLeaveCallback(member);
+    });
+
+    // listen for buzz
+    channel.bind("client-buzz", (id) => {
+        buzzCallback(id);
     });
 }
 
@@ -71,7 +76,8 @@ function joinChannel(
     kickCallback,
     startTimerCallback,
     pauseTimerCallback,
-    resetTimerCallback
+    resetTimerCallback,
+    buzzCallback
 ) {
     // Initialize regular client
     channels = new Pusher(PUSHER_APP_KEY, {
@@ -126,6 +132,18 @@ function joinChannel(
             channel = null;
             kickCallback();
         }
+    });
+
+    // listen for buzz
+    channel.bind("client-buzz", (id) => {
+        buzzCallback(id);
+    });
+
+    return new Promise((resolve, reject) => {
+        channel.bind("pusher:subscription_succeeded", () => {
+            const me = channel.members.me;
+            resolve(me.id);
+        });
     });
 }
 

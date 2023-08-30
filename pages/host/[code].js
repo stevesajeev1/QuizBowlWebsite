@@ -8,6 +8,7 @@ import { Raleway } from "next/font/google";
 import Teams from "../../components/Teams";
 import Buttons from "../../components/Buttons";
 import Timer from "../../components/Timer";
+import BuzzedTeam from "../../components/BuzzedTeam";
 
 const raleway = Raleway({
     subsets: ["latin"],
@@ -23,6 +24,7 @@ export default function Host() {
     const [initialTimer, setInitialTimer] = useState(60);
     const [timer, setTimer] = useState(60);
     const [timerStarted, setTimerStarted] = useState(false);
+    const [buzzed, setBuzzed] = useState("");
 
     const roundRef = useRef();
     roundRef.current = round;
@@ -30,10 +32,18 @@ export default function Host() {
     const teamsRef = useRef();
     teamsRef.current = teams;
 
+    let teamsDictionary = useRef();
+
+    const initialTimerRef = useRef();
+    initialTimerRef.current = initialTimer;
+
     const timerRef = useRef();
     timerRef.current = timer;
 
     const timerWorkerRef = useRef();
+
+    const buzzedRef = useRef();
+    buzzedRef.current = buzzed;
 
     const teamJoin = (team) => {
         const teamInfo = team.info;
@@ -47,7 +57,6 @@ export default function Host() {
             tenIncorrect: 0,
             fifteenCorrect: 0,
             fifteenIncorrect: 0,
-            teamQuestions: 0,
         };
 
         if (!(teamInfo.isHost || teamInfo.isSpectating)) {
@@ -56,7 +65,8 @@ export default function Host() {
             triggerEvent("update", {
                 round: roundRef.current,
                 teams: newTeams,
-                timer: initialTimer,
+                timer: initialTimerRef.current,
+                buzzed: buzzedRef.current,
             });
         }
     };
@@ -70,19 +80,30 @@ export default function Host() {
                 1
             );
             setTeams(newTeams);
-            triggerEvent("update", {
-                round: roundRef.current,
-                teams: newTeams,
-                timer: initialTimer,
-            });
+            if (team.id == buzzedRef.current) {
+                setBuzzed("");
+                triggerEvent("update", {
+                    round: roundRef.current,
+                    teams: newTeams,
+                    timer: initialTimerRef.current,
+                    buzzed: "",
+                });
+            } else {
+                triggerEvent("update", {
+                    round: roundRef.current,
+                    teams: newTeams,
+                    timer: initialTimerRef.current,
+                    buzzed: buzzedRef.current,
+                });
+            }
         }
     };
 
     const teamOverrideScore = (teamID, newTotalScore) => {
-        const team = teams.findIndex((t) => t.id == teamID);
+        const team = teamsRef.current.findIndex((t) => t.id == teamID);
 
-        const newTeam = structuredClone(teams[team]);
-        const newScore = structuredClone(teams[team].score);
+        const newTeam = structuredClone(teamsRef.current[team]);
+        const newScore = structuredClone(teamsRef.current[team].score);
 
         newScore.totalScore = newTotalScore;
         newTeam.score = newScore;
@@ -94,7 +115,8 @@ export default function Host() {
         triggerEvent("update", {
             round: roundRef.current,
             teams: newTeams,
-            timer: initialTimer,
+            timer: initialTimerRef.current,
+            buzzed: buzzedRef.current,
         });
     };
 
@@ -108,11 +130,29 @@ export default function Host() {
 
     const startRound = (round) => {
         setRound(round);
-        triggerEvent("update", {
-            round: round,
-            teams: teams,
-            timer: initialTimer,
-        });
+        setBuzzed("");
+
+        pauseTimer();
+        setTimerStarted(false);
+        if (round == "Team Questions") {
+            setInitialTimer(120);
+            setTimer(120);
+            triggerEvent("update", {
+                round: round,
+                teams: teamsRef.current,
+                timer: 120,
+                buzzed: buzzedRef.current,
+            });
+        } else {
+            setInitialTimer(60);
+            setTimer(60);
+            triggerEvent("update", {
+                round: round,
+                teams: teamsRef.current,
+                timer: 60,
+                buzzed: buzzedRef.current,
+            });
+        }
     };
 
     const changeTimer = (newTime) => {
@@ -122,8 +162,9 @@ export default function Host() {
         setTimerStarted(false);
         triggerEvent("update", {
             round: roundRef.current,
-            teams: teams,
+            teams: teamsRef.current,
             timer: newTime,
+            buzzed: buzzedRef.current,
         });
     };
 
@@ -140,12 +181,94 @@ export default function Host() {
     };
 
     const resetTimer = () => {
-        setTimer(initialTimer);
         triggerEvent("timer", "reset");
+        setTimer(initialTimerRef.current);
+        setTimerStarted(false);
         timerWorkerRef.current?.postMessage("end");
     };
 
-    const endTimer = () => {};
+    const endTimer = () => {
+        
+    };
+
+    const handleBuzz = (id) => {
+        setTimer(initialTimerRef.current);
+        setTimerStarted(false);
+        timerWorkerRef.current?.postMessage("end");
+        setBuzzed(id);
+    };
+
+    const correctResponse = (teamID) => {
+        const team = teamsRef.current.findIndex((t) => t.id == teamID);
+
+        const newTeam = structuredClone(teamsRef.current[team]);
+        const newScore = structuredClone(teamsRef.current[team].score);
+
+        switch (roundRef.current) {
+            case "5 Point Round":
+                newScore.totalScore += 5;
+                newScore.fiveCorrect++;
+                break;
+            case "10 Point Round":
+                newScore.totalScore += 10;
+                newScore.tenCorrect++;
+                break;
+            case "15 Point Round":
+                newScore.totalScore += 15;
+                newScore.fifteenCorrect++;
+                break;
+        }
+
+        newTeam.score = newScore;
+
+        const newTeams = [...teamsRef.current];
+        newTeams[team] = newTeam;
+
+        setTeams(newTeams);
+        setBuzzed("");
+        triggerEvent("update", {
+            round: roundRef.current,
+            teams: newTeams,
+            timer: initialTimerRef.current,
+            buzzed: "",
+        });
+    }
+
+    const incorrectResponse = (teamID) => {
+        const team = teamsRef.current.findIndex((t) => t.id == teamID);
+
+        const newTeam = structuredClone(teamsRef.current[team]);
+        const newScore = structuredClone(teamsRef.current[team].score);
+
+        switch (roundRef.current) {
+            case "5 Point Round":
+                newScore.totalScore -= 5;
+                newScore.fiveIncorrect++;
+                break;
+            case "10 Point Round":
+                newScore.totalScore -= 10;
+                newScore.tenIncorrect++;
+                break;
+            case "15 Point Round":
+                newScore.totalScore -= 15;
+                newScore.fifteenIncorrect++;
+                break;
+        }
+
+        newTeam.score = newScore;
+
+        const newTeams = [...teamsRef.current];
+        newTeams[team] = newTeam;
+
+        setTeams(newTeams);
+        setBuzzed("");
+        triggerEvent("update", {
+            round: roundRef.current,
+            teams: newTeams,
+            timer: initialTimerRef.current,
+            buzzed: "",
+        });
+    }
 
     useEffect(() => {
         if (!router.isReady) return;
@@ -153,13 +276,15 @@ export default function Host() {
         const code = router.query.code;
         setCode(code);
 
-        hostChannel(code, teamJoin, teamLeave);
+        hostChannel(code, teamJoin, teamLeave, handleBuzz);
 
-        timerWorkerRef.current = new Worker(new URL("../../timerWorker.js", import.meta.url));
+        timerWorkerRef.current = new Worker(
+            new URL("../../timerWorker.js", import.meta.url)
+        );
         timerWorkerRef.current.onmessage = () => {
             const newTime = Math.round((timerRef.current - 0.1) * 10) / 10;
             if (newTime < 0) {
-                timerWorkerRef.postMessage("end");
+                timerWorkerRef.current?.postMessage("end");
                 endTimer();
             } else {
                 setTimer(newTime);
@@ -167,8 +292,21 @@ export default function Host() {
         };
         return () => {
             timerWorkerRef.current?.terminate();
-        }
+        };
     }, [router.isReady]);
+
+    useEffect(() => {
+        teamsRef.current.sort((a, b) => {
+            return new Date(a.joinTime) - new Date(b.joinTime);
+        });
+
+        teamsDictionary.current = Object.fromEntries(
+            teamsRef.current.map((t, index) => [
+                t.id,
+                { number: index + 1, nickname: t.nickname },
+            ])
+        );
+    }, [teams]);
 
     return (
         <div className="container">
@@ -204,7 +342,7 @@ export default function Host() {
                         <h1 className={`${raleway.className} ${styles.round}`}>
                             {round ? round : "Waiting for Next Round..."}
                         </h1>
-                        {round && (
+                        {round && round != "Buzzer Check" && (
                             <>
                                 <Timer
                                     host={true}
@@ -217,6 +355,27 @@ export default function Host() {
                                     pauseTimer={pauseTimer}
                                     resetTimer={resetTimer}
                                 />
+                                {buzzed && (
+                                    <div
+                                        className={`${raleway.className} ${styles.buzzedTeam}`}
+                                    >
+                                        <BuzzedTeam
+                                            team={
+                                                teamsDictionary.current[buzzed]
+                                            }
+                                            correctResponse={
+                                                () => {
+                                                    correctResponse(buzzed);
+                                                }
+                                            }
+                                            incorrectResponse={
+                                                () => {
+                                                    incorrectResponse(buzzed);
+                                                }
+                                            }
+                                        />
+                                    </div>
+                                )}
                             </>
                         )}
                     </div>

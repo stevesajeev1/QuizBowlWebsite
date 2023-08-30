@@ -1,6 +1,7 @@
 import styles from "../styles/Teams.module.css";
 import { Domine, Raleway, Martian_Mono } from "next/font/google";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 
 const domine = Domine({
     subsets: ["latin"],
@@ -18,11 +19,16 @@ const martian_mono = Martian_Mono({
 });
 
 function Teams(props) {
-    const teams = JSON.parse(JSON.stringify(props.teams));
+    const [teams, setTeams] = useState(JSON.parse(JSON.stringify(props.teams)));
 
-    const teamNumbers = Object.fromEntries(teams.map((t, index) => [t.id, index + 1]));
+    props.teams.sort((a, b) => {
+        return new Date(a.joinTime) - new Date(b.joinTime);
+    });
+    let teamNumbers = Object.fromEntries(
+        props.teams.map((t, index) => [t.id, index + 1])
+    );
 
-    teams.sort((a, b) => {
+    props.teams.sort((a, b) => {
         return b.score.totalScore - a.score.totalScore;
     });
 
@@ -39,18 +45,33 @@ function Teams(props) {
         props.overrideScore(teamID, newTotalScore);
     };
 
+    useEffect(() => {
+        props.teams.sort((a, b) => {
+            return new Date(a.joinTime) - new Date(b.joinTime);
+        });
+
+        teamNumbers = Object.fromEntries(
+            props.teams.map((t, index) => [t.id, index + 1])
+        );
+        props.teams.sort((a, b) => {
+            return b.score.totalScore - a.score.totalScore;
+        });
+        setTeams(props.teams);
+    }, [props.teams]);
+
     return (
         <ul className={styles.teamsContainer}>
             <h1 className={`${domine.className} ${styles.teamsHeader}`}>
                 TEAMS
             </h1>
-            {teams.map(team => (
+            {teams.map((team) => (
                 <li
                     key={team.id}
                     className={`${raleway.className} ${styles.team}`}
                 >
                     <div className={styles.teamName}>
-                        Team {teamNumbers[team.id]}: <strong>{team.nickname}</strong>
+                        Team {teamNumbers[team.id]}:{" "}
+                        <strong>{team.nickname}</strong>
                         {props.host && (
                             <Image
                                 className={styles.kick}
@@ -117,7 +138,14 @@ function Teams(props) {
                             >
                                 Team Questions:{" "}
                                 <span className={styles.correct}>
-                                    {team.score.teamQuestions}
+                                    {team.score.totalScore -
+                                        team.score.fifteenCorrect * 15 +
+                                        team.score.fifteenIncorrect * 15 -
+                                        team.score.tenCorrect * 10 +
+                                        team.score.tenIncorrect * 10 -
+                                        team.score.fiveCorrect * 5 +
+                                        team.score.fiveIncorrect * 5 -
+                                        100}
                                 </span>
                             </div>
                         </div>

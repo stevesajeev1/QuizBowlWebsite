@@ -1,0 +1,48 @@
+.buzzedTeamContainer {
+    background-color: var(--bg);
+    padding: 20px 40px 20px 40px;
+    border-radius: 10px;
+}
+
+.buzzedTeam {
+    color: var(--off-white);
+    font-size: 50px;
+}
+
+.buzzedTeamName {
+    color: var(--off-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 30px;
+    margin-bottom: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.buttons {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.button {
+    font-weight: bold;
+    color: white;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.button:hover {
+    cursor: pointer;
+}
+
+.correct {
+    background-color: limegreen;
+}
+
+.incorrect {
+    background-color: red;
+}

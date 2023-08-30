@@ -7,6 +7,7 @@ import { Raleway } from "next/font/google";
 import Teams from "../../components/Teams";
 import styles from "../../styles/Game.module.css";
 import Timer from "../../components/Timer";
+import Buzzer from "../../components/Buzzer";
 
 const raleway = Raleway({
     subsets: ["latin"],
@@ -22,7 +23,7 @@ export default function Game() {
     const [round, setRound] = useState("");
     const [initialTimer, setInitialTimer] = useState(60);
     const [timer, setTimer] = useState(60);
-    const [timerStarted, setTimerStarted] = useState(false);
+    const [buzzed, setBuzzed] = useState("buzz");
 
     const initialTimerRef = useRef();
     initialTimerRef.current = initialTimer;
@@ -32,13 +33,24 @@ export default function Game() {
 
     const timerWorkerRef = useRef();
 
+    const nicknameRef = useRef();
+    nicknameRef.current = nickname;
+
+    const idRef = useRef("");
+
     const gameUpdate = (updatedInfo) => {
         setTeams(updatedInfo.teams);
         setRound(updatedInfo.round);
         pauseTimer();
         setInitialTimer(updatedInfo.timer);
         setTimer(updatedInfo.timer);
-        setTimerStarted(false);
+        if (updatedInfo.buzzed != idRef.current) {
+            if (updatedInfo.buzzed == "") {
+                setBuzzed("buzz");
+            } else {
+                setBuzzed("disabled");
+            }
+        }
     };
 
     const kick = () => {
@@ -46,22 +58,38 @@ export default function Game() {
     };
 
     const startTimer = () => {
-        setTimerStarted(true);
         timerWorkerRef.current?.postMessage("start");
     };
 
     const pauseTimer = () => {
-        setTimerStarted(false);
         timerWorkerRef.current?.postMessage("end");
     };
 
     const resetTimer = () => {
         setTimer(initialTimerRef.current);
-        setTimerStarted(false);
+        timerWorkerRef.current?.postMessage("end");
+        setBuzzed("buzz");
+    };
+
+    const endTimer = () => {
+        setBuzzed("disabled");
+    };
+
+    const handleBuzz = () => {
+        setBuzzed("buzzed");
+        triggerEvent("buzz", idRef.current);
+        setTimer(initialTimerRef.current);
         timerWorkerRef.current?.postMessage("end");
     };
 
-    const endTimer = () => {};
+    const otherBuzz = (id) => {
+        if (id == idRef.current) {
+            return;
+        }
+        setBuzzed("disabled");
+        setTimer(initialTimerRef.current);
+        timerWorkerRef.current?.postMessage("end");
+    };
 
     useEffect(() => {
         if (!router.isReady) return;
@@ -78,14 +106,19 @@ export default function Game() {
             kick,
             startTimer,
             pauseTimer,
-            resetTimer
-        );
+            resetTimer,
+            otherBuzz
+        ).then((id) => {
+            idRef.current = id;
+        });
 
-        timerWorkerRef.current = new Worker(new URL("../../timerWorker.js", import.meta.url));
+        timerWorkerRef.current = new Worker(
+            new URL("../../timerWorker.js", import.meta.url)
+        );
         timerWorkerRef.current.onmessage = () => {
             const newTime = Math.round((timerRef.current - 0.1) * 10) / 10;
             if (newTime < 0) {
-                timerWorkerRef.postMessage("end");
+                timerWorkerRef.current?.postMessage("end");
                 endTimer();
             } else {
                 setTimer(newTime);
@@ -93,7 +126,7 @@ export default function Game() {
         };
         return () => {
             timerWorkerRef.current?.terminate();
-        }
+        };
     }, [router.isReady]);
 
     return (
@@ -129,13 +162,17 @@ export default function Game() {
                         <h1 className={`${raleway.className} ${styles.round}`}>
                             {round ? round : "Waiting for Next Round..."}
                         </h1>
-                        {round && (
+                        {round && round != "Buzzer Check" && (
                             <>
-                                <Timer
-                                    host={false}
-                                    time={timer}
-                                    started={timerStarted}
-                                />
+                                <Timer host={false} time={timer} />
+                                {round != "Team Questions" && (
+                                    <div className={styles.buzzerContainer}>
+                                        <Buzzer
+                                            buzzed={buzzed}
+                                            handleBuzz={handleBuzz}
+                                        />
+                                    </div>
+                                )}
                             </>
                         )}
                     </div>

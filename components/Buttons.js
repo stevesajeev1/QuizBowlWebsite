@@ -71,6 +71,10 @@ function Buttons(props) {
             <div
                 className={styles.button}
                 onClick={() => {
+                    setFiveSelected(false);
+                    setTenSelected(false);
+                    setFifteenSelected(false);
+                    setTeamQuestionsSelected(false);
                     props.startRound("Buzzer Check");
                     props.buzzerCheck();
                 }}

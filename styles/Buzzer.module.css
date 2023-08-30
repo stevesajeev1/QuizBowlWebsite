@@ -1,0 +1,44 @@
+.buzzer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    height: 150px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 90px;
+}
+
+.notBuzzed {
+    background-color: limegreen;
+    box-shadow: 0 0 15px 1px black;
+}
+
+.notBuzzed:hover {
+    cursor: pointer;
+}
+
+.buzzed {
+    background-color: red;
+    box-shadow: none;
+    animation: buzzerAnimation;
+    animation-duration: 200ms;
+    animation-timing-function: ease-out;
+}
+
+.disabled {
+    background-color: gray;
+    box-shadow: none;
+}
+
+@keyframes buzzerAnimation {
+    0% {
+        transform: scale(1);
+    }
+    20% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}

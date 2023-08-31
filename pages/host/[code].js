@@ -370,7 +370,7 @@ export default function Host() {
 
     useEffect(() => {
         speechSynthesisRef.current = window.speechSynthesis;
-    });
+    }, []);
 
     return (
         <div className="container">

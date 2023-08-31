@@ -25,6 +25,11 @@ export default function Game() {
     const [timer, setTimer] = useState(60);
     const [buzzed, setBuzzed] = useState("buzz");
 
+    const teamsRef = useRef();
+    teamsRef.current = teams;
+
+    const teamNumber = useRef();
+
     const initialTimerRef = useRef();
     initialTimerRef.current = initialTimer;
 
@@ -78,7 +83,6 @@ export default function Game() {
     const handleBuzz = () => {
         setBuzzed("buzzed");
         triggerEvent("buzz", idRef.current);
-        setTimer(initialTimerRef.current);
         timerWorkerRef.current?.postMessage("end");
     };
 
@@ -87,9 +91,17 @@ export default function Game() {
             return;
         }
         setBuzzed("disabled");
-        setTimer(initialTimerRef.current);
         timerWorkerRef.current?.postMessage("end");
     };
+
+    const buzzTimer = () => {
+        setTimer(3);
+        timerWorkerRef.current?.postMessage("startBuzzTimer");
+    }
+
+    const endBuzzTimer = () => {
+        timerWorkerRef.current?.postMessage("end");
+    }
 
     useEffect(() => {
         if (!router.isReady) return;
@@ -107,7 +119,8 @@ export default function Game() {
             startTimer,
             pauseTimer,
             resetTimer,
-            otherBuzz
+            otherBuzz,
+            buzzTimer
         ).then((id) => {
             idRef.current = id;
         });
@@ -115,11 +128,15 @@ export default function Game() {
         timerWorkerRef.current = new Worker(
             new URL("../../timerWorker.js", import.meta.url)
         );
-        timerWorkerRef.current.onmessage = () => {
+        timerWorkerRef.current.onmessage = (e) => {
             const newTime = Math.round((timerRef.current - 0.1) * 10) / 10;
             if (newTime < 0) {
                 timerWorkerRef.current?.postMessage("end");
-                endTimer();
+                if (e.data == "buzzTimer") {
+                    endBuzzTimer();
+                } else {
+                    endTimer();
+                }
             } else {
                 setTimer(newTime);
             }
@@ -128,6 +145,14 @@ export default function Game() {
             timerWorkerRef.current?.terminate();
         };
     }, [router.isReady]);
+
+    useEffect(() => {
+        teamsRef.current.sort((a, b) => {
+            return new Date(a.joinTime) - new Date(b.joinTime);
+        });
+
+        teamNumber.current = teamsRef.current.findIndex(t => t.nickname == nicknameRef.current) + 1;
+    }, [teams]);
 
     return (
         <div className="container">

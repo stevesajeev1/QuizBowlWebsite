@@ -77,7 +77,8 @@ function joinChannel(
     startTimerCallback,
     pauseTimerCallback,
     resetTimerCallback,
-    buzzCallback
+    buzzCallback,
+    buzzTimerCallback
 ) {
     // Initialize regular client
     channels = new Pusher(PUSHER_APP_KEY, {
@@ -126,8 +127,8 @@ function joinChannel(
     channel.bind("pusher:member_removed", (member) => {
         const memberInfo = member.info;
         if (memberInfo.isHost) {
-            channels.unsubscribe(`presence-${code}`);
-            channels.disconnect();
+            channels?.unsubscribe(`presence-${code}`);
+            channels?.disconnect();
             channels = null;
             channel = null;
             kickCallback();
@@ -137,6 +138,10 @@ function joinChannel(
     // listen for buzz
     channel.bind("client-buzz", (id) => {
         buzzCallback(id);
+    });
+
+    channel.bind("client-buzzTimer", () => {
+        buzzTimerCallback();
     });
 
     return new Promise((resolve, reject) => {

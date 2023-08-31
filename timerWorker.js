@@ -11,5 +11,10 @@ onmessage = (e) => {
             clearInterval(timerInterval);
             timerInterval = null;
             break;
+        case "startBuzzTimer":
+            timerInterval = setInterval(() => {
+                postMessage("buzzTimer");
+            }, 100);
+            break;
     }
 }

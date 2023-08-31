@@ -10,8 +10,11 @@ const domine = Domine({
 function Buzzer(props) {
     const [buzzed, setBuzzed] = useState(props.buzzed);
 
+    const buzzedRef = useRef();
+    buzzedRef.current = buzzed;
+
     const handleBuzz = () => {
-        if (buzzed == "buzzed" || buzzed == "disabled") {
+        if (buzzedRef.current == "buzzed" || buzzedRef.current == "disabled") {
             return;
         }
 

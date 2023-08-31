@@ -45,6 +45,9 @@ export default function Host() {
     const buzzedRef = useRef();
     buzzedRef.current = buzzed;
 
+    const audioRef = useRef();
+    const speechSynthesisRef = useRef(speechSynthesis);
+
     const teamJoin = (team) => {
         const teamInfo = team.info;
         teamInfo.id = team.id;
@@ -188,15 +191,52 @@ export default function Host() {
     };
 
     const endTimer = () => {
-        
+        setTimerStarted(false);
+        audioRef.current = new Audio("/buzzTimeUp.wav");
+        audioRef.current.play();
+        audioRef.current.onended = () => {
+            audioRef.current = null;
+        }
     };
 
     const handleBuzz = (id) => {
-        setTimer(initialTimerRef.current);
+        playBuzzAudio(id);
         setTimerStarted(false);
         timerWorkerRef.current?.postMessage("end");
         setBuzzed(id);
     };
+
+    const playBuzzAudio = (id) => {
+        audioRef.current = new Audio("/buzz.wav");
+        audioRef.current.play();
+        audioRef.current.onended = () => {
+            audioRef.current = null;
+            const msg = new SpeechSynthesisUtterance(`Team ${teamsDictionary.current[id].number}: ${teamsDictionary.current[id].nickname}`);
+            msg.voice = speechSynthesisRef.current.getVoices()[6];
+            speechSynthesisRef.current.speak(msg);
+
+            msg.onend = () => {
+                triggerEvent("buzzTimer", "");
+                buzzTimer();
+            }
+        }
+    }
+
+    const buzzTimer = () => {
+        setTimer(3);
+        setTimerStarted(true);
+        timerWorkerRef.current?.postMessage("startBuzzTimer");
+    }
+
+    const endBuzzTimer = () => {
+        setTimerStarted(false);
+        audioRef.current = new Audio("/buzzTimeUp.wav");
+        audioRef.current.play();
+        audioRef.current.onended = () => {
+            audioRef.current = null;
+        }
+        timerWorkerRef.current?.postMessage("end");
+    }
 
     const correctResponse = (teamID) => {
         const team = teamsRef.current.findIndex((t) => t.id == teamID);
@@ -226,6 +266,14 @@ export default function Host() {
 
         setTeams(newTeams);
         setBuzzed("");
+        setTimer(initialTimerRef.current);
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current = null;
+        }
+        if (speechSynthesisRef.current.speaking) {
+            speechSynthesisRef.current.cancel();
+        }
         triggerEvent("update", {
             round: roundRef.current,
             teams: newTeams,
@@ -262,6 +310,14 @@ export default function Host() {
 
         setTeams(newTeams);
         setBuzzed("");
+        setTimer(initialTimerRef.current);
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current = null;
+        }
+        if (speechSynthesisRef.current.speaking) {
+            speechSynthesisRef.current.cancel();
+        }
         triggerEvent("update", {
             round: roundRef.current,
             teams: newTeams,
@@ -281,11 +337,15 @@ export default function Host() {
         timerWorkerRef.current = new Worker(
             new URL("../../timerWorker.js", import.meta.url)
         );
-        timerWorkerRef.current.onmessage = () => {
+        timerWorkerRef.current.onmessage = (e) => {
             const newTime = Math.round((timerRef.current - 0.1) * 10) / 10;
             if (newTime < 0) {
                 timerWorkerRef.current?.postMessage("end");
-                endTimer();
+                if (e.data == "buzzTimer") {
+                    endBuzzTimer();
+                } else {
+                    endTimer();
+                }
             } else {
                 setTimer(newTime);
             }

@@ -46,7 +46,7 @@ export default function Host() {
     buzzedRef.current = buzzed;
 
     const audioRef = useRef();
-    const speechSynthesisRef = useRef(speechSynthesis);
+    const speechSynthesisRef = useRef();
 
     const teamJoin = (team) => {
         const teamInfo = team.info;
@@ -367,6 +367,10 @@ export default function Host() {
             ])
         );
     }, [teams]);
+
+    useEffect(() => {
+        speechSynthesisRef.current = window.speechSynthesis;
+    });
 
     return (
         <div className="container">

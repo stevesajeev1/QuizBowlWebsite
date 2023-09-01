@@ -5,7 +5,13 @@ const PUSHER_CLUSTER_REGION = "us2";
 let channels;
 let channel;
 
-function hostChannel(code, teamJoinCallback, teamLeaveCallback, buzzCallback, buzzerCheckCallback) {
+function hostChannel(
+    code,
+    teamJoinCallback,
+    teamLeaveCallback,
+    buzzCallback,
+    buzzerCheckCallback
+) {
     // Initialize host client
     channels = new Pusher(PUSHER_APP_KEY, {
         cluster: PUSHER_CLUSTER_REGION,
@@ -160,4 +166,11 @@ function joinChannel(
 
 async function triggerEvent(event, data) {
     channel.trigger(`client-${event}`, data);
+}
+
+function disconnectHost(code) {
+    channels?.unsubscribe(`presence-${code}`);
+    channels?.disconnect();
+    channels = null;
+    channel = null;
 }

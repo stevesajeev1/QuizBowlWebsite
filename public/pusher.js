@@ -5,7 +5,7 @@ const PUSHER_CLUSTER_REGION = "us2";
 let channels;
 let channel;
 
-function hostChannel(code, teamJoinCallback, teamLeaveCallback, buzzCallback) {
+function hostChannel(code, teamJoinCallback, teamLeaveCallback, buzzCallback, buzzerCheckCallback) {
     // Initialize host client
     channels = new Pusher(PUSHER_APP_KEY, {
         cluster: PUSHER_CLUSTER_REGION,
@@ -33,6 +33,11 @@ function hostChannel(code, teamJoinCallback, teamLeaveCallback, buzzCallback) {
     // listen for buzz
     channel.bind("client-buzz", (id) => {
         buzzCallback(id);
+    });
+
+    // listen for buzzer check
+    channel.bind("client-buzzerCheck", (id) => {
+        buzzerCheckCallback(id);
     });
 }
 
@@ -140,6 +145,7 @@ function joinChannel(
         buzzCallback(id);
     });
 
+    // listen for starting buzz timer
     channel.bind("client-buzzTimer", () => {
         buzzTimerCallback();
     });

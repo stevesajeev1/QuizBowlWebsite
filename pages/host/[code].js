@@ -9,6 +9,7 @@ import Teams from "../../components/Teams";
 import Buttons from "../../components/Buttons";
 import Timer from "../../components/Timer";
 import BuzzedTeam from "../../components/BuzzedTeam";
+import BuzzerCheck from "../../components/BuzzerCheck";
 
 const raleway = Raleway({
     subsets: ["latin"],
@@ -25,6 +26,7 @@ export default function Host() {
     const [timer, setTimer] = useState(60);
     const [timerStarted, setTimerStarted] = useState(false);
     const [buzzed, setBuzzed] = useState("");
+    const [buzzerChecked, setBuzzerChecked] = useState([]);
 
     const roundRef = useRef();
     roundRef.current = round;
@@ -47,6 +49,9 @@ export default function Host() {
 
     const audioRef = useRef();
     const speechSynthesisRef = useRef();
+
+    const buzzerCheckedRef = useRef();
+    buzzerCheckedRef.current = buzzerChecked;
 
     const teamJoin = (team) => {
         const teamInfo = team.info;
@@ -128,7 +133,7 @@ export default function Host() {
     };
 
     const buzzerCheck = () => {
-        console.log("Perform buzzer check");
+        setBuzzerChecked([]);
     };
 
     const startRound = (round) => {
@@ -326,13 +331,18 @@ export default function Host() {
         });
     }
 
+    const handleBuzzerCheck = (teamID) => {
+        const newBuzzerChecked = [...buzzerCheckedRef.current, teamID];
+        setBuzzerChecked(newBuzzerChecked);
+    }
+
     useEffect(() => {
         if (!router.isReady) return;
 
         const code = router.query.code;
         setCode(code);
 
-        hostChannel(code, teamJoin, teamLeave, handleBuzz);
+        hostChannel(code, teamJoin, teamLeave, handleBuzz, handleBuzzerCheck);
 
         timerWorkerRef.current = new Worker(
             new URL("../../timerWorker.js", import.meta.url)
@@ -442,6 +452,7 @@ export default function Host() {
                                 )}
                             </>
                         )}
+                        {round == "Buzzer Check" && <BuzzerCheck teams={teams} buzzerChecked={buzzerChecked}/>}
                     </div>
                     <Teams
                         teams={teams}

@@ -1,0 +1,50 @@
+.container {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.teams {
+    height: 80%;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    outline: 5px solid var(--accent);
+}
+
+.teams::-webkit-scrollbar {
+    width: 7px;
+}
+
+.teams::-webkit-scrollbar-thumb {
+    background-color: var(--bg);
+    border-radius: 5px;
+}
+
+.teamContainer {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 0;
+}
+
+.teamName {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 30px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.checked {
+    background-color: limegreen;
+}
+
+.notChecked {
+    background-color: red;
+}

@@ -103,6 +103,13 @@ export default function Game() {
         timerWorkerRef.current?.postMessage("end");
     }
 
+    const handleBuzzerCheck = () => {
+        setBuzzed("buzzed");
+        triggerEvent("buzzerCheck", idRef.current);
+        const audio = new Audio("/buzz.wav");
+        audio.play();
+    }
+
     useEffect(() => {
         if (!router.isReady) return;
 
@@ -200,6 +207,7 @@ export default function Game() {
                                 )}
                             </>
                         )}
+                        {round == "Buzzer Check" && <div className={styles.buzzerCheckContainer}><Buzzer buzzed={buzzed} handleBuzz={handleBuzzerCheck}/></div>}
                     </div>
                     <Teams teams={teams} host={false} />
                 </div>

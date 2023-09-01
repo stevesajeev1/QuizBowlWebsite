@@ -47,7 +47,7 @@
 .round {
     margin-top: 20px;
     margin-bottom: 20px;
-    font-size: 30px;
+    font-size: 50px;
 }
 
 .buzzerContainer {
@@ -56,4 +56,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.buzzerCheckContainer {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
 }

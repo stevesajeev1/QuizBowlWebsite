@@ -8,8 +8,18 @@ function BuzzedTeam(props) {
                 Team {props.team.number}: <strong>{props.team.nickname}</strong>
             </div>
             <div className={styles.buttons}>
-                <div className={`${styles.button} ${styles.correct}`} onClick={props.correctResponse}>Correct</div>
-                <div className={`${styles.button} ${styles.incorrect}`} onClick={props.incorrectResponse}>Incorrect</div>
+                <div
+                    className={`${styles.button} ${styles.correct}`}
+                    onClick={props.correctResponse}
+                >
+                    Correct
+                </div>
+                <div
+                    className={`${styles.button} ${styles.incorrect}`}
+                    onClick={props.incorrectResponse}
+                >
+                    Incorrect
+                </div>
             </div>
         </div>
     );

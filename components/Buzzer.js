@@ -26,13 +26,13 @@ function Buzzer(props) {
             if (e.key == " ") {
                 handleBuzz();
             }
-        }
+        };
 
         document.addEventListener("keydown", handleKeyDown);
 
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
-        }
+        };
     }, []);
 
     useEffect(() => {
@@ -42,11 +42,19 @@ function Buzzer(props) {
     return (
         <div
             className={`${domine.className} ${styles.buzzer} ${
-                buzzed == "buzzed" ? styles.buzzed : (buzzed == "disabled" ? styles.disabled : styles.notBuzzed)
+                buzzed == "buzzed"
+                    ? styles.buzzed
+                    : buzzed == "disabled"
+                    ? styles.disabled
+                    : styles.notBuzzed
             }`}
             onClick={handleBuzz}
         >
-            {buzzed == "buzzed" ? "BUZZED" : (buzzed == "disabled" ? "DISABLED" : "BUZZ")}
+            {buzzed == "buzzed"
+                ? "BUZZED"
+                : buzzed == "disabled"
+                ? "DISABLED"
+                : "BUZZ"}
         </div>
     );
 }

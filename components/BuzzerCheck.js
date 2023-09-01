@@ -23,7 +23,8 @@ function BuzzerCheck(props) {
 
     useEffect(() => {
         setBuzzerChecked(props.buzzerChecked);
-    }), [props.buzzerChecked];
+    }),
+        [props.buzzerChecked];
 
     return (
         <div className={styles.container}>

@@ -79,7 +79,9 @@ function Timer(props) {
             {props.host && (
                 <div className={styles.buttons}>
                     <div
-                        className={`${raleway.className} ${styles.button} ${started ? styles.pause : ""}`}
+                        className={`${raleway.className} ${styles.button} ${
+                            started ? styles.pause : ""
+                        }`}
                         onClick={handleTimer}
                     >
                         {started ? "Pause" : "Start"} Timer

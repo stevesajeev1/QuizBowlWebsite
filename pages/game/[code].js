@@ -97,18 +97,18 @@ export default function Game() {
     const buzzTimer = () => {
         setTimer(3);
         timerWorkerRef.current?.postMessage("startBuzzTimer");
-    }
+    };
 
     const endBuzzTimer = () => {
         timerWorkerRef.current?.postMessage("end");
-    }
+    };
 
     const handleBuzzerCheck = () => {
         setBuzzed("buzzed");
         triggerEvent("buzzerCheck", idRef.current);
         const audio = new Audio("/buzz.wav");
         audio.play();
-    }
+    };
 
     useEffect(() => {
         if (!router.isReady) return;
@@ -158,7 +158,10 @@ export default function Game() {
             return new Date(a.joinTime) - new Date(b.joinTime);
         });
 
-        teamNumber.current = teamsRef.current.findIndex(t => t.nickname == nicknameRef.current) + 1;
+        teamNumber.current =
+            teamsRef.current.findIndex(
+                (t) => t.nickname == nicknameRef.current
+            ) + 1;
     }, [teams]);
 
     return (
@@ -207,7 +210,14 @@ export default function Game() {
                                 )}
                             </>
                         )}
-                        {round == "Buzzer Check" && <div className={styles.buzzerCheckContainer}><Buzzer buzzed={buzzed} handleBuzz={handleBuzzerCheck}/></div>}
+                        {round == "Buzzer Check" && (
+                            <div className={styles.buzzerCheckContainer}>
+                                <Buzzer
+                                    buzzed={buzzed}
+                                    handleBuzz={handleBuzzerCheck}
+                                />
+                            </div>
+                        )}
                     </div>
                     <Teams teams={teams} host={false} />
                 </div>

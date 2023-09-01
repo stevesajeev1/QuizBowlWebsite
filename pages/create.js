@@ -93,7 +93,7 @@ export default function Create() {
                     className={`${martianMono.className}`}
                     ref={codeRef}
                     onKeyDown={(e) => {
-                        e.key == "Enter" && handleCreate()
+                        e.key == "Enter" && handleCreate();
                     }}
                 ></input>
             </div>

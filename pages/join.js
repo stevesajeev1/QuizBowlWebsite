@@ -116,7 +116,7 @@ export default function Join() {
                     className={`${martianMono.className}`}
                     ref={codeRef}
                     onKeyDown={(e) => {
-                        e.key == "Enter" && handleJoin()
+                        e.key == "Enter" && handleJoin();
                     }}
                 ></input>
             </div>
@@ -126,7 +126,7 @@ export default function Join() {
                     className={`${martianMono.className}`}
                     ref={nicknameRef}
                     onKeyDown={(e) => {
-                        e.key == "Enter" && handleJoin()
+                        e.key == "Enter" && handleJoin();
                     }}
                 ></input>
             </div>

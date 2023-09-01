@@ -201,7 +201,7 @@ export default function Host() {
         audioRef.current.play();
         audioRef.current.onended = () => {
             audioRef.current = null;
-        }
+        };
     };
 
     const handleBuzz = (id) => {
@@ -216,22 +216,24 @@ export default function Host() {
         audioRef.current.play();
         audioRef.current.onended = () => {
             audioRef.current = null;
-            const msg = new SpeechSynthesisUtterance(`Team ${teamsDictionary.current[id].number}: ${teamsDictionary.current[id].nickname}`);
+            const msg = new SpeechSynthesisUtterance(
+                `Team ${teamsDictionary.current[id].number}: ${teamsDictionary.current[id].nickname}`
+            );
             msg.voice = speechSynthesisRef.current.getVoices()[6];
             speechSynthesisRef.current.speak(msg);
 
             msg.onend = () => {
                 triggerEvent("buzzTimer", "");
                 buzzTimer();
-            }
-        }
-    }
+            };
+        };
+    };
 
     const buzzTimer = () => {
         setTimer(3);
         setTimerStarted(true);
         timerWorkerRef.current?.postMessage("startBuzzTimer");
-    }
+    };
 
     const endBuzzTimer = () => {
         setTimerStarted(false);
@@ -239,9 +241,9 @@ export default function Host() {
         audioRef.current.play();
         audioRef.current.onended = () => {
             audioRef.current = null;
-        }
+        };
         timerWorkerRef.current?.postMessage("end");
-    }
+    };
 
     const correctResponse = (teamID) => {
         const team = teamsRef.current.findIndex((t) => t.id == teamID);
@@ -285,7 +287,7 @@ export default function Host() {
             timer: initialTimerRef.current,
             buzzed: "",
         });
-    }
+    };
 
     const incorrectResponse = (teamID) => {
         const team = teamsRef.current.findIndex((t) => t.id == teamID);
@@ -329,12 +331,12 @@ export default function Host() {
             timer: initialTimerRef.current,
             buzzed: "",
         });
-    }
+    };
 
     const handleBuzzerCheck = (teamID) => {
         const newBuzzerChecked = [...buzzerCheckedRef.current, teamID];
         setBuzzerChecked(newBuzzerChecked);
-    }
+    };
 
     useEffect(() => {
         if (!router.isReady) return;
@@ -437,22 +439,23 @@ export default function Host() {
                                             team={
                                                 teamsDictionary.current[buzzed]
                                             }
-                                            correctResponse={
-                                                () => {
-                                                    correctResponse(buzzed);
-                                                }
-                                            }
-                                            incorrectResponse={
-                                                () => {
-                                                    incorrectResponse(buzzed);
-                                                }
-                                            }
+                                            correctResponse={() => {
+                                                correctResponse(buzzed);
+                                            }}
+                                            incorrectResponse={() => {
+                                                incorrectResponse(buzzed);
+                                            }}
                                         />
                                     </div>
                                 )}
                             </>
                         )}
-                        {round == "Buzzer Check" && <BuzzerCheck teams={teams} buzzerChecked={buzzerChecked}/>}
+                        {round == "Buzzer Check" && (
+                            <BuzzerCheck
+                                teams={teams}
+                                buzzerChecked={buzzerChecked}
+                            />
+                        )}
                     </div>
                     <Teams
                         teams={teams}

@@ -30,7 +30,7 @@ To run the application locally, follow these steps:
 
    > Remember to update the `PUSHER_APP_KEY` and `PUSHER_CLUSTER_REGION` variables in the `public/pusher.js` file.
 
-5. Make sure to enable **Enable client events** in the Pusher application settings.
+5. Make sure to enable "**Enable client events**" in the Pusher application settings.
 
 ## Technologies Used
 

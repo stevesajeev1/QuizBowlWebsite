@@ -43,7 +43,12 @@ function BuzzerCheck(props) {
                                 className={`${raleway.className} ${styles.teamName}`}
                             >
                                 Team {index + 1}:{" "}
-                                <strong>{team.nickname}</strong>
+                                <strong>
+                                    {team.nickname.slice(0, 20) +
+                                        (team.nickname.length > 20
+                                            ? "..."
+                                            : "")}
+                                </strong>
                             </div>
                         </div>
                     );

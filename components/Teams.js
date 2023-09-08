@@ -71,7 +71,10 @@ function Teams(props) {
                 >
                     <div className={styles.teamName}>
                         Team {teamNumbers[team.id]}:{" "}
-                        <strong>{team.nickname}</strong>
+                        <strong>
+                            {team.nickname.slice(0, 20) +
+                                (team.nickname.length > 20 ? "..." : "")}
+                        </strong>
                         {props.host && (
                             <Image
                                 className={styles.kick}

@@ -77,6 +77,7 @@ export default function Game() {
     };
 
     const endTimer = () => {
+        timerWorkerRef.current?.postMessage("end");
         setBuzzed("disabled");
     };
 
@@ -188,7 +189,11 @@ export default function Game() {
                         GAME CODE: <strong>{code}</strong>
                     </h1>
                     <h1 className={styles.nickname}>
-                        CURRENT TEAM: <strong>{nickname}</strong>
+                        CURRENT TEAM:{" "}
+                        <strong>
+                            {nickname.slice(0, 20) +
+                                (nickname.length > 20 ? "..." : "")}
+                        </strong>
                     </h1>
                 </header>
                 <hr className={styles.line}></hr>

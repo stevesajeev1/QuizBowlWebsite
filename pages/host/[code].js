@@ -200,7 +200,9 @@ export default function Host() {
 
     const endTimer = () => {
         setTimerStarted(false);
+        timerWorkerRef.current?.postMessage("end");
         audioRef.current = new Audio("/buzzTimeUp.wav");
+        audioRef.current.volume = 0.25;
         audioRef.current.play();
         audioRef.current.onended = () => {
             audioRef.current = null;
@@ -208,6 +210,9 @@ export default function Host() {
     };
 
     const handleBuzz = (id) => {
+        if (buzzedRef.current != "") {
+            return;
+        }
         playBuzzAudio(id);
         setTimerStarted(false);
         timerWorkerRef.current?.postMessage("end");
@@ -220,8 +225,14 @@ export default function Host() {
         audioRef.current.onended = () => {
             audioRef.current = null;
             const msg = new SpeechSynthesisUtterance(
-                `Team ${teamsDictionary.current[id].number}: ${teamsDictionary.current[id].nickname}`
+                `Team ${teamsDictionary.current[id].number}: ${
+                    teamsDictionary.current[id].nickname.slice(0, 20) +
+                    (teamsDictionary.current[id].nickname.length > 20
+                        ? "..."
+                        : "")
+                }}`
             );
+            msg.rate = 1.5;
             msg.voice = speechSynthesisRef.current.getVoices()[6];
             speechSynthesisRef.current.speak(msg);
 
@@ -241,6 +252,7 @@ export default function Host() {
     const endBuzzTimer = () => {
         setTimerStarted(false);
         audioRef.current = new Audio("/buzzTimeUp.wav");
+        audioRef.current.volume = 0.25;
         audioRef.current.play();
         audioRef.current.onended = () => {
             audioRef.current = null;
@@ -276,7 +288,9 @@ export default function Host() {
 
         setTeams(newTeams);
         setBuzzed("");
+        timerWorkerRef.current?.postMessage("end");
         setTimer(initialTimerRef.current);
+        setTimerStarted(false);
         if (audioRef.current) {
             audioRef.current.pause();
             audioRef.current = null;
@@ -320,7 +334,9 @@ export default function Host() {
 
         setTeams(newTeams);
         setBuzzed("");
+        timerWorkerRef.current?.postMessage("end");
         setTimer(initialTimerRef.current);
+        setTimerStarted(false);
         if (audioRef.current) {
             audioRef.current.pause();
             audioRef.current = null;
@@ -331,6 +347,26 @@ export default function Host() {
         triggerEvent("update", {
             round: roundRef.current,
             teams: newTeams,
+            timer: initialTimerRef.current,
+            buzzed: "",
+        });
+    };
+
+    const dismissBuzz = () => {
+        setBuzzed("");
+        timerWorkerRef.current?.postMessage("end");
+        setTimer(initialTimerRef.current);
+        setTimerStarted(false);
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current = null;
+        }
+        if (speechSynthesisRef.current.speaking) {
+            speechSynthesisRef.current.cancel();
+        }
+        triggerEvent("update", {
+            round: roundRef.current,
+            teams: teamsRef.current,
             timer: initialTimerRef.current,
             buzzed: "",
         });
@@ -450,6 +486,9 @@ export default function Host() {
                                             }}
                                             incorrectResponse={() => {
                                                 incorrectResponse(buzzed);
+                                            }}
+                                            dismissBuzz={() => {
+                                                dismissBuzz();
                                             }}
                                         />
                                     </div>

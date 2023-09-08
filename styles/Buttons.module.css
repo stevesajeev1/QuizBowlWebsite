@@ -1,17 +1,16 @@
 .buttons {
-    margin-top: 20px;
-    margin-bottom: 20px;
     display: flex;
-    justify-content: space-evenly;
     gap: 10px;
+    margin: 20px 5px;
 }
 
 .button {
     background-color: var(--accent);
-    padding: 10px;
+    padding: 10px 5px 10px 5px;
     border-radius: 15px;
     font-weight: bold;
     color: black;
+    text-align: center;
 }
 
 .button:hover {

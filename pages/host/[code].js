@@ -28,9 +28,6 @@ export default function Host() {
     const [buzzed, setBuzzed] = useState("");
     const [buzzerChecked, setBuzzerChecked] = useState([]);
 
-    const codeRef = useRef();
-    codeRef.current = code;
-
     const roundRef = useRef();
     roundRef.current = round;
 
@@ -422,7 +419,7 @@ export default function Host() {
     useEffect(() => {
         speechSynthesisRef.current = window.speechSynthesis;
         return () => {
-            disconnectHost(codeRef.current);
+            disconnect();
         };
     }, []);
 
@@ -434,7 +431,7 @@ export default function Host() {
             </Head>
 
             <div className="background"></div>
-            <Link href="/">
+            <Link href="/?">
                 <Image
                     className="logo"
                     src="/logo.png"

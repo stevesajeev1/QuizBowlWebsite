@@ -165,6 +165,12 @@ export default function Game() {
             ) + 1;
     }, [teams]);
 
+    useEffect(() => {
+        return () => {
+            disconnect();
+        };
+    }, []);
+
     return (
         <div className="container">
             <Head>

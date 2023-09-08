@@ -4,6 +4,7 @@ const PUSHER_CLUSTER_REGION = "us2";
 // Channels client
 let channels;
 let channel;
+let channelCode;
 
 function hostChannel(
     code,
@@ -25,7 +26,8 @@ function hostChannel(
         },
     });
 
-    channel = channels.subscribe(`presence-${code}`);
+    channelCode = `presence-${code}`;
+    channel = channels.subscribe(channelCode);
 
     // Listen for member add
     channel.bind("pusher:member_added", (member) => {
@@ -104,7 +106,8 @@ function joinChannel(
         },
     });
 
-    channel = channels.subscribe(`presence-${code}`);
+    channelCode = `presence-${code}`;
+    channel = channels.subscribe(channelCode);
 
     // Listen for update from host
     channel.bind("client-update", (data) => {
@@ -138,7 +141,7 @@ function joinChannel(
     channel.bind("pusher:member_removed", (member) => {
         const memberInfo = member.info;
         if (memberInfo.isHost) {
-            channels?.unsubscribe(`presence-${code}`);
+            channels?.unsubscribe(channelCode);
             channels?.disconnect();
             channels = null;
             channel = null;
@@ -168,9 +171,12 @@ async function triggerEvent(event, data) {
     channel.trigger(`client-${event}`, data);
 }
 
-function disconnectHost(code) {
-    channels?.unsubscribe(`presence-${code}`);
-    channels?.disconnect();
-    channels = null;
-    channel = null;
+function disconnect() {
+    if (channelCode != null) {
+        channels?.unsubscribe(channelCode);
+        channels?.disconnect();
+        channels = null;
+        channel = null;
+        channelCode = null;
+    }
 }

@@ -222,12 +222,9 @@ export default function Host() {
         audioRef.current.onended = () => {
             audioRef.current = null;
             const msg = new SpeechSynthesisUtterance(
-                `Team ${teamsDictionary.current[id].number}: ${
-                    teamsDictionary.current[id].nickname.slice(0, 20) +
-                    (teamsDictionary.current[id].nickname.length > 20
-                        ? "..."
-                        : "")
-                }}`
+                `Team ${
+                    teamsDictionary.current[id].number
+                }: ${teamsDictionary.current[id].nickname.slice(0, 20)}}`
             );
             msg.rate = 1.5;
             msg.voice = speechSynthesisRef.current.getVoices()[6];

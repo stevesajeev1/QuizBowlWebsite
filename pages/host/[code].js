@@ -227,7 +227,6 @@ export default function Host() {
                 teamsDictionary.current[id].number
             }: ${teamsDictionary.current[id].nickname.slice(0, 20)}}`
         );
-        msg.rate = 1.5;
         msg.voice = speechSynthesisRef.current.getVoices()[6];
         speechSynthesisRef.current.speak(msg);
 

@@ -96,7 +96,7 @@ export default function Game() {
     };
 
     const buzzTimer = () => {
-        setTimer(3);
+        setTimer(5);
         timerWorkerRef.current?.postMessage("startBuzzTimer");
     };
 

@@ -3,6 +3,7 @@ let timerInterval;
 onmessage = (e) => {
     switch (e.data) {
         case "start":
+            clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 postMessage("");
             }, 100);
@@ -12,6 +13,7 @@ onmessage = (e) => {
             timerInterval = null;
             break;
         case "startBuzzTimer":
+            clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 postMessage("buzzTimer");
             }, 100);

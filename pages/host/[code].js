@@ -261,15 +261,15 @@ export default function Host() {
 
         switch (roundRef.current) {
             case "5 Point Round":
-                newScore.totalScore += 5;
+                newScore.totalScore = parseInt(newScore.totalScore) + 5;
                 newScore.fiveCorrect++;
                 break;
             case "10 Point Round":
-                newScore.totalScore += 10;
+                newScore.totalScore = parseInt(newScore.totalScore) + 10;
                 newScore.tenCorrect++;
                 break;
             case "15 Point Round":
-                newScore.totalScore += 15;
+                newScore.totalScore = parseInt(newScore.totalScore) + 15;
                 newScore.fifteenCorrect++;
                 break;
         }
@@ -307,15 +307,15 @@ export default function Host() {
 
         switch (roundRef.current) {
             case "5 Point Round":
-                newScore.totalScore -= 5;
+                newScore.totalScore = parseInt(newScore.totalScore) - 5;
                 newScore.fiveIncorrect++;
                 break;
             case "10 Point Round":
-                newScore.totalScore -= 10;
+                newScore.totalScore = parseInt(newScore.totalScore) - 10;
                 newScore.tenIncorrect++;
                 break;
             case "15 Point Round":
-                newScore.totalScore -= 15;
+                newScore.totalScore = parseInt(newScore.totalScore) - 15;
                 newScore.fifteenIncorrect++;
                 break;
         }

@@ -237,7 +237,7 @@ export default function Host() {
     };
 
     const buzzTimer = () => {
-        setTimer(5);
+        setTimer(3);
         setTimerStarted(true);
         timerWorkerRef.current?.postMessage("startBuzzTimer");
     };

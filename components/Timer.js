@@ -1,6 +1,6 @@
 import styles from "../styles/Timer.module.css";
 import { Raleway, Martian_Mono } from "next/font/google";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const raleway = Raleway({
     subsets: ["latin"],
@@ -15,6 +15,12 @@ const martian_mono = Martian_Mono({
 function Timer(props) {
     const [time, setTime] = useState(props.time);
     const [started, setStarted] = useState(props.started);
+
+    const timeRef = useRef(props.time);
+    timeRef.current = time;
+
+    const startedRef = useRef(props.started);
+    startedRef.current = started;
 
     const changeTimer = () => {
         if (!props.host) {
@@ -61,6 +67,28 @@ function Timer(props) {
     useEffect(() => {
         setStarted(props.started);
     }, [props.started]);
+
+    useEffect(() => {
+        if (props.host) {
+            const handleKeyDown = (e) => {
+                if (e.key == " ") {
+                    if (timeRef.current <= 0) {
+                        props.resetTimer();
+                    } else if (startedRef.current) {
+                        props.pauseTimer();
+                    } else {
+                        props.startTimer();
+                    }
+                }
+            };
+    
+            document.addEventListener("keydown", handleKeyDown);
+    
+            return () => {
+                document.removeEventListener("keydown", handleKeyDown);
+            };
+        }
+    }, []);
 
     return (
         <div className={styles.timerContainer}>

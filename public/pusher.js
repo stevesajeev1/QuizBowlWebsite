@@ -189,7 +189,6 @@ function triggerEvent(event, data) {
         data: data,
         time: new Date()
     }
-    console.log(eventData);
     channel.trigger(`client-${event}`, eventData);
 }
 

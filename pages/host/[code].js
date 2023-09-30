@@ -76,14 +76,14 @@ export default function Host() {
                     teams: newTeams,
                     timer: initialTimerRef.current,
                     buzzed: buzzedRef.current,
-                    buzzerChecked: buzzerCheckedRef.current
+                    buzzerChecked: buzzerCheckedRef.current,
                 });
             } else {
                 triggerEvent("update", {
                     round: roundRef.current,
                     teams: newTeams,
                     timer: initialTimerRef.current,
-                    buzzed: buzzedRef.current
+                    buzzed: buzzedRef.current,
                 });
             }
         }
@@ -113,14 +113,14 @@ export default function Host() {
                         teams: newTeams,
                         timer: initialTimerRef.current,
                         buzzed: buzzedRef.current,
-                        buzzerChecked: buzzerCheckedRef.current
+                        buzzerChecked: buzzerCheckedRef.current,
                     });
                 } else {
                     triggerEvent("update", {
                         round: roundRef.current,
                         teams: newTeams,
                         timer: initialTimerRef.current,
-                        buzzed: buzzedRef.current
+                        buzzed: buzzedRef.current,
                     });
                 }
             }
@@ -157,7 +157,7 @@ export default function Host() {
     };
 
     const retryBuzzerCheck = (teamID) => {
-        const newBuzzerChecked = [...buzzerCheckedRef.current]
+        const newBuzzerChecked = [...buzzerCheckedRef.current];
         newBuzzerChecked.splice(newBuzzerChecked.indexOf(teamID), 1);
         setBuzzerChecked(newBuzzerChecked);
         triggerEvent("update", {
@@ -165,9 +165,9 @@ export default function Host() {
             teams: teamsRef.current,
             timer: initialTimerRef.current,
             buzzed: buzzedRef.current,
-            buzzerChecked: newBuzzerChecked
+            buzzerChecked: newBuzzerChecked,
         });
-    }
+    };
 
     const startRound = (round) => {
         setRound(round);
@@ -193,7 +193,7 @@ export default function Host() {
                     teams: teamsRef.current,
                     timer: 60,
                     buzzed: buzzedRef.current,
-                    buzzerChecked: []
+                    buzzerChecked: [],
                 });
             } else {
                 triggerEvent("update", {

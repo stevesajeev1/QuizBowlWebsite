@@ -51,7 +51,7 @@ function BuzzerCheck(props) {
                                             : "")}
                                 </strong>
                             </div>
-                            {buzzerChecked.includes(team.id) &&
+                            {buzzerChecked.includes(team.id) && (
                                 <Image
                                     className={styles.retryBuzzer}
                                     src="/retryBuzzerIcon.svg"
@@ -62,7 +62,7 @@ function BuzzerCheck(props) {
                                         props.retryBuzzer(team.id);
                                     }}
                                 />
-                            }
+                            )}
                         </div>
                     );
                 })}

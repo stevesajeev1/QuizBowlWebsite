@@ -48,7 +48,7 @@ export default function Game() {
     nicknameRef.current = nickname;
 
     const idRef = useRef("");
-    
+
     const pingRef = useRef();
     pingRef.current = ping;
 
@@ -59,7 +59,10 @@ export default function Game() {
         setInitialTimer(updatedInfo.timer);
         setTimer(updatedInfo.timer);
         if (updatedInfo.buzzed != idRef.current) {
-            if (updatedInfo.round == "Buzzer Check" && updatedInfo.buzzerChecked.includes(idRef.current)) {
+            if (
+                updatedInfo.round == "Buzzer Check" &&
+                updatedInfo.buzzerChecked.includes(idRef.current)
+            ) {
                 setBuzzed("buzzed");
             } else if (updatedInfo.buzzed == "") {
                 setBuzzed("buzz");
@@ -122,9 +125,9 @@ export default function Game() {
 
     const updatePing = (ms) => {
         setPing([...pingRef.current, ms]);
-    }
+    };
 
-    const average = array => array.reduce((a, b) => a + b) / array.length;
+    const average = (array) => array.reduce((a, b) => a + b) / array.length;
 
     useEffect(() => {
         if (!router.isReady) return;
@@ -249,9 +252,15 @@ export default function Game() {
                                 />
                             </div>
                         )}
-                        {round && ping &&
-                            <div className={`${martian_mono.className} ${styles.ping}`}>Last Message Ping: <b>{ping[ping.length - 1]} ms</b> Average Ping: <b>{Math.round(average(ping))} ms</b></div>
-                        }
+                        {round && ping && (
+                            <div
+                                className={`${martian_mono.className} ${styles.ping}`}
+                            >
+                                Last Message Ping:{" "}
+                                <b>{ping[ping.length - 1]} ms</b> Average Ping:{" "}
+                                <b>{Math.round(average(ping))} ms</b>
+                            </div>
+                        )}
                     </div>
                     <Teams teams={teams} host={false} />
                 </div>

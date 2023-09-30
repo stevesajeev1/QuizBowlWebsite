@@ -3,13 +3,18 @@ import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import { Raleway } from "next/font/google";
+import { Raleway, Martian_Mono } from "next/font/google";
 import Teams from "../../components/Teams";
 import styles from "../../styles/Game.module.css";
 import Timer from "../../components/Timer";
 import Buzzer from "../../components/Buzzer";
 
 const raleway = Raleway({
+    subsets: ["latin"],
+    display: "swap",
+});
+
+const martian_mono = Martian_Mono({
     subsets: ["latin"],
     display: "swap",
 });
@@ -24,6 +29,7 @@ export default function Game() {
     const [initialTimer, setInitialTimer] = useState(60);
     const [timer, setTimer] = useState(60);
     const [buzzed, setBuzzed] = useState("buzz");
+    const [ping, setPing] = useState([]);
 
     const teamsRef = useRef();
     teamsRef.current = teams;
@@ -42,6 +48,9 @@ export default function Game() {
     nicknameRef.current = nickname;
 
     const idRef = useRef("");
+    
+    const pingRef = useRef();
+    pingRef.current = ping;
 
     const gameUpdate = (updatedInfo) => {
         setTeams(updatedInfo.teams);
@@ -111,6 +120,12 @@ export default function Game() {
         audio.play();
     };
 
+    const updatePing = (ms) => {
+        setPing([...pingRef.current, ms]);
+    }
+
+    const average = array => array.reduce((a, b) => a + b) / array.length;
+
     useEffect(() => {
         if (!router.isReady) return;
 
@@ -128,7 +143,8 @@ export default function Game() {
             pauseTimer,
             resetTimer,
             otherBuzz,
-            buzzTimer
+            buzzTimer,
+            updatePing
         ).then((id) => {
             idRef.current = id;
         });
@@ -155,6 +171,8 @@ export default function Game() {
     }, [router.isReady]);
 
     useEffect(() => {
+        if (!router.isReady) return;
+
         teamsRef.current.sort((a, b) => {
             return new Date(a.joinTime) - new Date(b.joinTime);
         });
@@ -163,13 +181,15 @@ export default function Game() {
             teamsRef.current.findIndex(
                 (t) => t.nickname == nicknameRef.current
             ) + 1;
-    }, [teams]);
+    }, [teams, router.isReady]);
 
     useEffect(() => {
+        if (!router.isReady) return;
+
         return () => {
             disconnect();
         };
-    }, []);
+    }, [router.isReady]);
 
     return (
         <div className="container">
@@ -229,6 +249,9 @@ export default function Game() {
                                 />
                             </div>
                         )}
+                        {round && ping &&
+                            <div className={`${martian_mono.className} ${styles.ping}`}>Last Message Ping: <b>{ping[ping.length - 1]} ms</b> Average Ping: <b>{Math.round(average(ping))} ms</b></div>
+                        }
                     </div>
                     <Teams teams={teams} host={false} />
                 </div>

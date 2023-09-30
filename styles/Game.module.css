@@ -37,6 +37,7 @@
 }
 
 .buzzContainer {
+    position: relative;
     flex: 1;
     background-color: var(--off-white);
     display: flex;
@@ -77,4 +78,10 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
+}
+
+.ping {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
 }

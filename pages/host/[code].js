@@ -74,7 +74,7 @@ export default function Host() {
                 round: roundRef.current,
                 teams: newTeams,
                 timer: initialTimerRef.current,
-                buzzed: buzzedRef.current,
+                buzzed: buzzedRef.current
             });
         }
     };
@@ -400,6 +400,8 @@ export default function Host() {
     }, [router.isReady]);
 
     useEffect(() => {
+        if (!router.isReady) return;
+
         teamsRef.current.sort((a, b) => {
             return new Date(a.joinTime) - new Date(b.joinTime);
         });
@@ -410,14 +412,16 @@ export default function Host() {
                 { number: index + 1, nickname: t.nickname },
             ])
         );
-    }, [teams]);
+    }, [teams, router.isReady]);
 
     useEffect(() => {
+        if (!router.isReady) return;
+
         speechSynthesisRef.current = window.speechSynthesis;
         return () => {
             disconnect();
         };
-    }, []);
+    }, [router.isReady]);
 
     return (
         <div className="container">

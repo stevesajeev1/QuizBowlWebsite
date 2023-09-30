@@ -39,12 +39,14 @@ function hostChannel(
     });
 
     // listen for buzz
-    channel.bind("client-buzz", (id) => {
+    channel.bind("client-buzz", (eventData) => {
+        const id = eventData.data;
         buzzCallback(id);
     });
 
     // listen for buzzer check
-    channel.bind("client-buzzerCheck", (id) => {
+    channel.bind("client-buzzerCheck", (eventData) => {
+        const id = eventData.data;
         buzzerCheckCallback(id);
     });
 }
@@ -91,7 +93,8 @@ function joinChannel(
     pauseTimerCallback,
     resetTimerCallback,
     buzzCallback,
-    buzzTimerCallback
+    buzzTimerCallback,
+    pingCallback
 ) {
     // Initialize regular client
     channels = new Pusher(PUSHER_APP_KEY, {
@@ -110,20 +113,28 @@ function joinChannel(
     channel = channels.subscribe(channelCode);
 
     // Listen for update from host
-    channel.bind("client-update", (data) => {
+    channel.bind("client-update", (eventData) => {
+        const data = eventData.data;
+        const ping = new Date() - new Date(eventData.time);
         updateCallback(data);
+        pingCallback(ping);
     });
 
     // listen for event to disconnect
-    channel.bind("client-kick", (teamID) => {
+    channel.bind("client-kick", (eventData) => {
+        const teamID = eventData.data;
+        const ping = new Date() - new Date(eventData.time);
         if (teamID == channel.members.me.id) {
             channels.disconnect();
             kickCallback();
         }
+        pingCallback(ping);
     });
 
     // listen for timer events
-    channel.bind("client-timer", (eventType) => {
+    channel.bind("client-timer", (eventData) => {
+        const eventType = eventData.data;
+        const ping = new Date() - new Date(eventData.time);
         switch (eventType) {
             case "start":
                 startTimerCallback();
@@ -135,6 +146,7 @@ function joinChannel(
                 resetTimerCallback();
                 break;
         }
+        pingCallback(ping);
     });
 
     // listen for member leave
@@ -150,13 +162,18 @@ function joinChannel(
     });
 
     // listen for buzz
-    channel.bind("client-buzz", (id) => {
+    channel.bind("client-buzz", (eventData) => {
+        const id = eventData.data;
+        const ping = new Date() - new Date(eventData.time);
         buzzCallback(id);
+        pingCallback(ping);
     });
 
     // listen for starting buzz timer
-    channel.bind("client-buzzTimer", () => {
+    channel.bind("client-buzzTimer", (eventData) => {
+        const ping = new Date() - new Date(eventData.time);
         buzzTimerCallback();
+        pingCallback(ping);
     });
 
     return new Promise((resolve, reject) => {
@@ -167,8 +184,13 @@ function joinChannel(
     });
 }
 
-async function triggerEvent(event, data) {
-    channel.trigger(`client-${event}`, data);
+function triggerEvent(event, data) {
+    const eventData = {
+        data: data,
+        time: new Date()
+    }
+    console.log(eventData);
+    channel.trigger(`client-${event}`, eventData);
 }
 
 function disconnect() {

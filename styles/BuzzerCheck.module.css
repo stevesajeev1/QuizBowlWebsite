@@ -24,6 +24,7 @@
 }
 
 .teamContainer {
+    position: relative;
     display: flex;
     gap: 5px;
     align-items: center;
@@ -47,4 +48,13 @@
 
 .notChecked {
     background-color: red;
+}
+
+.retryBuzzer {
+    position: absolute;
+    right: 20px;
+}
+
+.retryBuzzer:hover {
+    cursor: pointer;
 }

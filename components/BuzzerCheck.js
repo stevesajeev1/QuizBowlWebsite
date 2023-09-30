@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/BuzzerCheck.module.css";
 import { Raleway } from "next/font/google";
+import Image from "next/image";
 
 const raleway = Raleway({
     subsets: ["latin"],
@@ -50,6 +51,18 @@ function BuzzerCheck(props) {
                                             : "")}
                                 </strong>
                             </div>
+                            {buzzerChecked.includes(team.id) &&
+                                <Image
+                                    className={styles.retryBuzzer}
+                                    src="/retryBuzzerIcon.svg"
+                                    width={32}
+                                    height={32}
+                                    alt="Retry Buzzer"
+                                    onClick={() => {
+                                        props.retryBuzzer(team.id);
+                                    }}
+                                />
+                            }
                         </div>
                     );
                 })}

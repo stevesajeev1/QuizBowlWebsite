@@ -59,7 +59,9 @@ export default function Game() {
         setInitialTimer(updatedInfo.timer);
         setTimer(updatedInfo.timer);
         if (updatedInfo.buzzed != idRef.current) {
-            if (updatedInfo.buzzed == "") {
+            if (updatedInfo.round == "Buzzer Check" && updatedInfo.buzzerChecked.includes(idRef.current)) {
+                setBuzzed("buzzed");
+            } else if (updatedInfo.buzzed == "") {
                 setBuzzed("buzz");
             } else {
                 setBuzzed("disabled");
@@ -116,8 +118,6 @@ export default function Game() {
     const handleBuzzerCheck = () => {
         setBuzzed("buzzed");
         triggerEvent("buzzerCheck", idRef.current);
-        const audio = new Audio("/buzz.wav");
-        audio.play();
     };
 
     const updatePing = (ms) => {

@@ -70,12 +70,22 @@ export default function Host() {
         if (!(teamInfo.isHost || teamInfo.isSpectating)) {
             const newTeams = [...teamsRef.current, teamInfo];
             setTeams(newTeams);
-            triggerEvent("update", {
-                round: roundRef.current,
-                teams: newTeams,
-                timer: initialTimerRef.current,
-                buzzed: buzzedRef.current
-            });
+            if (roundRef.current == "Buzzer Check") {
+                triggerEvent("update", {
+                    round: roundRef.current,
+                    teams: newTeams,
+                    timer: initialTimerRef.current,
+                    buzzed: buzzedRef.current,
+                    buzzerChecked: buzzerCheckedRef.current
+                });
+            } else {
+                triggerEvent("update", {
+                    round: roundRef.current,
+                    teams: newTeams,
+                    timer: initialTimerRef.current,
+                    buzzed: buzzedRef.current
+                });
+            }
         }
     };
 
@@ -97,12 +107,22 @@ export default function Host() {
                     buzzed: "",
                 });
             } else {
-                triggerEvent("update", {
-                    round: roundRef.current,
-                    teams: newTeams,
-                    timer: initialTimerRef.current,
-                    buzzed: buzzedRef.current,
-                });
+                if (roundRef.current == "Buzzer Check") {
+                    triggerEvent("update", {
+                        round: roundRef.current,
+                        teams: newTeams,
+                        timer: initialTimerRef.current,
+                        buzzed: buzzedRef.current,
+                        buzzerChecked: buzzerCheckedRef.current
+                    });
+                } else {
+                    triggerEvent("update", {
+                        round: roundRef.current,
+                        teams: newTeams,
+                        timer: initialTimerRef.current,
+                        buzzed: buzzedRef.current
+                    });
+                }
             }
         }
     };
@@ -136,6 +156,19 @@ export default function Host() {
         setBuzzerChecked([]);
     };
 
+    const retryBuzzerCheck = (teamID) => {
+        const newBuzzerChecked = [...buzzerCheckedRef.current]
+        newBuzzerChecked.splice(newBuzzerChecked.indexOf(teamID), 1);
+        setBuzzerChecked(newBuzzerChecked);
+        triggerEvent("update", {
+            round: roundRef.current,
+            teams: teamsRef.current,
+            timer: initialTimerRef.current,
+            buzzed: buzzedRef.current,
+            buzzerChecked: newBuzzerChecked
+        });
+    }
+
     const startRound = (round) => {
         setRound(round);
         setBuzzed("");
@@ -154,12 +187,22 @@ export default function Host() {
         } else {
             setInitialTimer(60);
             setTimer(60);
-            triggerEvent("update", {
-                round: round,
-                teams: teamsRef.current,
-                timer: 60,
-                buzzed: buzzedRef.current,
-            });
+            if (round == "Buzzer Check") {
+                triggerEvent("update", {
+                    round: round,
+                    teams: teamsRef.current,
+                    timer: 60,
+                    buzzed: buzzedRef.current,
+                    buzzerChecked: []
+                });
+            } else {
+                triggerEvent("update", {
+                    round: round,
+                    teams: teamsRef.current,
+                    timer: 60,
+                    buzzed: buzzedRef.current,
+                });
+            }
         }
     };
 
@@ -368,6 +411,8 @@ export default function Host() {
     const handleBuzzerCheck = (teamID) => {
         const newBuzzerChecked = [...buzzerCheckedRef.current, teamID];
         setBuzzerChecked(newBuzzerChecked);
+        audioRef.current = new Audio("/buzz.wav");
+        audioRef.current.play();
     };
 
     useEffect(() => {
@@ -496,6 +541,7 @@ export default function Host() {
                             <BuzzerCheck
                                 teams={teams}
                                 buzzerChecked={buzzerChecked}
+                                retryBuzzer={retryBuzzerCheck}
                             />
                         )}
                     </div>

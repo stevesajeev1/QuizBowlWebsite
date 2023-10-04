@@ -1,10 +1,11 @@
 import Head from "next/head";
 import styles from "../styles/Join.module.css";
 import { Domine, Raleway, Martian_Mono } from "next/font/google";
-import { useRef } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import Loading from "../components/Loading";
 
 const domine = Domine({
     subsets: ["latin"],
@@ -27,6 +28,8 @@ export default function Join() {
     const codeRef = useRef(null);
     const nicknameRef = useRef(null);
 
+    const [loading, showLoading] = useState(false);
+
     const handleJoin = async () => {
         const code = codeRef.current.value.trim();
         const nickname = nicknameRef.current.value.trim();
@@ -48,6 +51,8 @@ export default function Join() {
             nicknameRef.current.reportValidity();
             return;
         }
+
+        showLoading(true);
         // Determine if game with code exists
         const codeExists = await fetch("/api/channels-exist", {
             method: "POST",
@@ -63,10 +68,12 @@ export default function Join() {
                 "A game with this code does not exist!"
             );
             codeRef.current.reportValidity();
+            showLoading(false);
             return;
         }
 
         const nicknameExists = await nicknameInUse(code, nickname);
+        showLoading(false);
 
         if (nicknameExists) {
             // Nickname in use
@@ -132,11 +139,14 @@ export default function Join() {
             </div>
             <div className={styles.spacer}></div>
 
-            <div
-                className={`${raleway.className} ${styles.button} ${styles.joinButton}`}
-                onClick={handleJoin}
-            >
-                JOIN
+            <div className={styles.buttonContainer}>
+                <div
+                    className={`${raleway.className} ${styles.button} ${styles.joinButton}`}
+                    onClick={handleJoin}
+                >
+                    JOIN
+                </div>
+                <Loading visible={loading} />
             </div>
         </div>
     );

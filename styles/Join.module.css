@@ -51,6 +51,9 @@
     box-shadow: 0 0 10px 3px var(--accent);
 }
 
-.joinButton {
+.buttonContainer {
+    margin-left: 48px;
+    display: flex;
+    align-items: center;
     margin-bottom: 100px;
 }

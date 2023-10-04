@@ -1,10 +1,11 @@
 import Head from "next/head";
 import styles from "../styles/Create.module.css";
 import { Domine, Raleway, Martian_Mono } from "next/font/google";
-import { useRef } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import Loading from "../components/Loading";
 
 const domine = Domine({
     subsets: ["latin"],
@@ -26,6 +27,8 @@ export default function Create() {
 
     const codeRef = useRef(null);
 
+    const [loading, showLoading] = useState(false);
+
     const handleCreate = async () => {
         const code = codeRef.current.value.trim();
 
@@ -42,6 +45,7 @@ export default function Create() {
             return;
         }
 
+        showLoading(true);
         // Determine if game with code already exists
         const exists = await fetch("/api/channels-exist", {
             method: "POST",
@@ -50,6 +54,7 @@ export default function Create() {
             },
             body: code,
         });
+        showLoading(false);
 
         if (exists.ok) {
             // Game with code already exists
@@ -99,11 +104,14 @@ export default function Create() {
             </div>
             <div className={styles.spacer}></div>
 
-            <div
-                className={`${raleway.className} ${styles.button} ${styles.joinButton}`}
-                onClick={handleCreate}
-            >
-                CREATE
+            <div className={styles.buttonContainer}>
+                <div
+                    className={`${raleway.className} ${styles.button} ${styles.joinButton}`}
+                    onClick={handleCreate}
+                >
+                    CREATE
+                </div>
+                <Loading visible={loading} />
             </div>
         </div>
     );

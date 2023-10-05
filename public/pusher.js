@@ -194,8 +194,8 @@ function joinChannel(
 function triggerEvent(event, data) {
     const eventData = {
         data: data,
-        time: new Date()
-    }
+        time: new Date(),
+    };
     channel.trigger(`client-${event}`, eventData);
 }
 

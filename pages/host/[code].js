@@ -42,6 +42,9 @@ export default function Host() {
     const timerRef = useRef();
     timerRef.current = timer;
 
+    const timerStartedRef = useRef();
+    timerStartedRef.current = timerStarted;
+
     const timerWorkerRef = useRef();
 
     const buzzedRef = useRef();
@@ -176,8 +179,10 @@ export default function Host() {
         setRound(round);
         setBuzzed("");
 
-        pauseTimer();
-        setTimerStarted(false);
+        if (timerStartedRef.current) {
+            pauseTimer();
+            setTimerStarted(false);
+        }
         if (round == "Team Questions") {
             setInitialTimer(120);
             setTimer(120);
@@ -261,7 +266,8 @@ export default function Host() {
         setTimerStarted(false);
         timerWorkerRef.current?.postMessage("end");
         // Allow other buzzes within 500 ms to trickle in to adjust for latency
-        if (!latencyRef.current) { // First buzz starts timer
+        if (!latencyRef.current) {
+            // First buzz starts timer
             teamsBuzzedRef.current = [{ teamID: id, buzzTime: time }];
             clearTimeout(latencyRef.current);
             latencyRef.current = setTimeout(() => {
@@ -278,7 +284,10 @@ export default function Host() {
                 latencyRef.current = null;
             }, 500);
         } else {
-            teamsBuzzedRef.current = [...teamsBuzzedRef.current, { teamID: id, buzzTime: time }]
+            teamsBuzzedRef.current = [
+                ...teamsBuzzedRef.current,
+                { teamID: id, buzzTime: time },
+            ];
         }
     };
 

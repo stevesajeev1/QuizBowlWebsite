@@ -101,12 +101,11 @@ export default function Game() {
         timerWorkerRef.current?.postMessage("end");
     };
 
-    const otherBuzz = (id) => {
-        if (id == idRef.current) {
-            return;
-        }
-        setBuzzed("disabled");
+    const otherBuzz = (id, confirmed) => {
         timerWorkerRef.current?.postMessage("end");
+        if (confirmed && id != idRef.current) {
+            setBuzzed("disabled");
+        }
     };
 
     const buzzTimer = () => {

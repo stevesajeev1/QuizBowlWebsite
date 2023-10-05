@@ -47,6 +47,9 @@ export default function Host() {
     const buzzedRef = useRef();
     buzzedRef.current = buzzed;
 
+    const latencyRef = useRef();
+    const teamsBuzzedRef = useRef();
+
     const audioRef = useRef();
     const speechSynthesisRef = useRef();
 
@@ -249,14 +252,34 @@ export default function Host() {
         };
     };
 
-    const handleBuzz = (id) => {
+    const handleBuzz = (data) => {
         if (buzzedRef.current != "") {
             return;
         }
-        playBuzzAudio(id);
+        const id = data.data;
+        const time = data.time;
         setTimerStarted(false);
         timerWorkerRef.current?.postMessage("end");
-        setBuzzed(id);
+        // Allow other buzzes within 500 ms to trickle in to adjust for latency
+        if (!latencyRef.current) { // First buzz starts timer
+            teamsBuzzedRef.current = [{ teamID: id, buzzTime: time }];
+            clearTimeout(latencyRef.current);
+            latencyRef.current = setTimeout(() => {
+                // Sort by buzz time
+                teamsBuzzedRef.current.sort((a, b) => {
+                    return new Date(a.buzzTime) - new Date(b.buzzTime);
+                });
+                console.log(teamsBuzzedRef.current);
+                playBuzzAudio(teamsBuzzedRef.current[0].teamID);
+                setBuzzed(teamsBuzzedRef.current[0].teamID);
+                triggerEvent("confirmedBuzz", teamsBuzzedRef.current[0].teamID);
+                teamsBuzzedRef.current = null;
+                clearTimeout(latencyRef.current);
+                latencyRef.current = null;
+            }, 500);
+        } else {
+            teamsBuzzedRef.current = [...teamsBuzzedRef.current, { teamID: id, buzzTime: time }]
+        }
     };
 
     const playBuzzAudio = (id) => {

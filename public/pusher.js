@@ -40,8 +40,7 @@ function hostChannel(
 
     // listen for buzz
     channel.bind("client-buzz", (eventData) => {
-        const id = eventData.data;
-        buzzCallback(id);
+        buzzCallback(eventData);
     });
 
     // listen for buzzer check
@@ -165,7 +164,15 @@ function joinChannel(
     channel.bind("client-buzz", (eventData) => {
         const id = eventData.data;
         const ping = new Date() - new Date(eventData.time);
-        buzzCallback(id);
+        buzzCallback(id, false);
+        pingCallback(ping);
+    });
+
+    // listen for confirmed buzz
+    channel.bind("client-confirmedBuzz", (eventData) => {
+        const id = eventData.data;
+        const ping = new Date() - new Date(eventData.time);
+        buzzCallback(id, true);
         pingCallback(ping);
     });
 

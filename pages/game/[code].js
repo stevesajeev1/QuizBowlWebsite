@@ -251,7 +251,7 @@ export default function Game() {
                                 />
                             </div>
                         )}
-                        {round && ping && (
+                        {round && ping.length != 0 && (
                             <div
                                 className={`${martian_mono.className} ${styles.ping}`}
                             >

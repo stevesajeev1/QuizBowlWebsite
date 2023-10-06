@@ -30,7 +30,14 @@ export default function Join() {
 
     const [loading, showLoading] = useState(false);
 
+    const loadingRef = useRef();
+    loadingRef.current = loading;
+
     const handleJoin = async () => {
+        if (loadingRef.current) {
+            return;
+        }
+
         const code = codeRef.current.value.trim();
         const nickname = nicknameRef.current.value.trim();
 

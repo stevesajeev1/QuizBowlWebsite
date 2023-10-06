@@ -29,7 +29,14 @@ export default function Create() {
 
     const [loading, showLoading] = useState(false);
 
+    const loadingRef = useRef();
+    loadingRef.current = loading;
+
     const handleCreate = async () => {
+        if (loadingRef.current) {
+            return;
+        }
+
         const code = codeRef.current.value.trim();
 
         const codeRegex = /^[a-zA-Z0-9_\-=@,.;]*$/;

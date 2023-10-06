@@ -223,8 +223,7 @@ async function triggerEvent(event, data) {
 
 function disconnect() {
     if (channelCode != null) {
-        channels?.unsubscribe(channelCode);
-        channels?.disconnect();
+        channels.disconnect();
         channels = null;
         channel = null;
         channelCode = null;

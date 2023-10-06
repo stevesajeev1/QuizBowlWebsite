@@ -14,7 +14,7 @@ const channels = new Channels({
 
 module.exports = (req, res) => {
     const code = req.body;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         channels
             .get({ path: "/channels", params: {} })
             .then((response) => response.json())

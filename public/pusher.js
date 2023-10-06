@@ -6,6 +6,31 @@ let channels;
 let channel;
 let channelCode;
 
+async function getTime() {
+    const startAPICall = new Date();
+    const res = await fetch(
+        "https://worldtimeapi.org/api/timezone/America/New_York"
+    );
+    const data = await res.json();
+    const endAPICall = new Date();
+    return {
+        time: data.datetime,
+        apiPing: Math.floor((endAPICall - startAPICall) / 2),
+    };
+}
+
+async function updatePing(eventData, pingCallback) {
+    const triggerTime = eventData.time;
+    const triggerPing = eventData.timePing;
+    const currentTime = await getTime();
+    const ping =
+        new Date(currentTime.time) -
+        new Date(triggerTime) -
+        currentTime.apiPing -
+        triggerPing;
+    pingCallback(ping);
+}
+
 function hostChannel(
     code,
     teamJoinCallback,
@@ -66,7 +91,7 @@ async function nicknameInUse(code, nickname) {
 
     channel = channels.subscribe(`presence-${code}`);
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         channel.bind("pusher:subscription_succeeded", (members) => {
             const membersObject = members.members;
             for (const memberKey in membersObject) {
@@ -114,26 +139,23 @@ function joinChannel(
     // Listen for update from host
     channel.bind("client-update", (eventData) => {
         const data = eventData.data;
-        const ping = new Date() - new Date(eventData.time);
         updateCallback(data);
-        pingCallback(ping);
+        updatePing(eventData, pingCallback);
     });
 
     // listen for event to disconnect
     channel.bind("client-kick", (eventData) => {
         const teamID = eventData.data;
-        const ping = new Date() - new Date(eventData.time);
         if (teamID == channel.members.me.id) {
             channels.disconnect();
             kickCallback();
         }
-        pingCallback(ping);
+        updatePing(eventData, pingCallback);
     });
 
     // listen for timer events
     channel.bind("client-timer", (eventData) => {
         const eventType = eventData.data;
-        const ping = new Date() - new Date(eventData.time);
         switch (eventType) {
             case "start":
                 startTimerCallback();
@@ -145,7 +167,7 @@ function joinChannel(
                 resetTimerCallback();
                 break;
         }
-        pingCallback(ping);
+        updatePing(eventData, pingCallback);
     });
 
     // listen for member leave
@@ -163,17 +185,15 @@ function joinChannel(
     // listen for buzz
     channel.bind("client-buzz", (eventData) => {
         const id = eventData.data;
-        const ping = new Date() - new Date(eventData.time);
         buzzCallback(id, false);
-        pingCallback(ping);
+        updatePing(eventData, pingCallback);
     });
 
     // listen for confirmed buzz
     channel.bind("client-confirmedBuzz", (eventData) => {
         const id = eventData.data;
-        const ping = new Date() - new Date(eventData.time);
         buzzCallback(id, true);
-        pingCallback(ping);
+        updatePing(eventData, pingCallback);
     });
 
     // listen for starting buzz timer
@@ -183,7 +203,7 @@ function joinChannel(
         pingCallback(ping);
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         channel.bind("pusher:subscription_succeeded", () => {
             const me = channel.members.me;
             resolve(me.id);
@@ -191,10 +211,12 @@ function joinChannel(
     });
 }
 
-function triggerEvent(event, data) {
+async function triggerEvent(event, data) {
+    const currentTime = await getTime();
     const eventData = {
         data: data,
-        time: new Date(),
+        time: currentTime.time,
+        timePing: currentTime.apiPing,
     };
     channel.trigger(`client-${event}`, eventData);
 }

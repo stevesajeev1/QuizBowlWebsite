@@ -15,7 +15,7 @@ const channels = new Channels({
 
 module.exports = (req, res) => {
     const data = req.body;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         const socketID = data.socket_id;
         const channel = data.channel_name;
 

@@ -31,7 +31,7 @@
     padding-inline: 20px;
 }
 
-.inputContainer > input {
+.inputContainer > input[type="text"] {
     flex: 1;
     height: 80%;
     border: 3px solid var(--accent);
@@ -40,6 +40,15 @@
     color: #000000;
     font-size: 20px;
     line-height: 0.9;
+}
+
+.inputContainer > input[type="checkbox"] {
+    width: 40px;
+    height: 40px;
+}
+
+.inputContainer > input[type="checkbox"]:hover {
+    cursor: pointer;
 }
 
 .inputContainer > input:focus {

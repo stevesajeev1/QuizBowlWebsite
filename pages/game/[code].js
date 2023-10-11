@@ -49,6 +49,8 @@ export default function Game() {
 
     const idRef = useRef("");
 
+    const [officialBuzzer, setOfficialBuzzer] = useState(false);
+
     const pingRef = useRef();
     pingRef.current = ping;
 
@@ -123,6 +125,9 @@ export default function Game() {
     };
 
     const updatePing = (ms) => {
+        if (ms < 0) {
+            return;
+        }
         setPing([...pingRef.current, ms]);
     };
 
@@ -135,6 +140,8 @@ export default function Game() {
         setCode(code);
         const nickname = router.query.nickname;
         setNickname(nickname);
+        const officialBuzzer = router.query.buzzer;
+        setOfficialBuzzer(officialBuzzer);
 
         joinChannel(
             code,
@@ -238,6 +245,7 @@ export default function Game() {
                                         <Buzzer
                                             buzzed={buzzed}
                                             handleBuzz={handleBuzz}
+                                            official={officialBuzzer}
                                         />
                                     </div>
                                 )}
@@ -248,6 +256,7 @@ export default function Game() {
                                 <Buzzer
                                     buzzed={buzzed}
                                     handleBuzz={handleBuzzerCheck}
+                                    official={officialBuzzer}
                                 />
                             </div>
                         )}

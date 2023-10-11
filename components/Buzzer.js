@@ -23,7 +23,9 @@ function Buzzer(props) {
 
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if (e.key == " ") {
+            if (props.official == "true" && e.key == "`") {
+                handleBuzz();
+            } else if (props.official == "false" && e.key == " ") {
                 handleBuzz();
             }
         };

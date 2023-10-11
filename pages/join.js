@@ -33,6 +33,10 @@ export default function Join() {
     const loadingRef = useRef();
     loadingRef.current = loading;
 
+    const [officialBuzzer, setOfficialBuzzer] = useState(false);
+    const officialBuzzerRef = useRef();
+    officialBuzzerRef.current = officialBuzzer;
+
     const handleJoin = async () => {
         if (loadingRef.current) {
             return;
@@ -95,8 +99,25 @@ export default function Join() {
             pathname: `/game/${code}`,
             query: {
                 nickname: nickname,
+                buzzer: officialBuzzerRef.current,
             },
         });
+    };
+
+    const handleOfficialBuzzer = () => {
+        if (!officialBuzzerRef.current) {
+            const filters = [];
+            navigator.usb
+                .requestDevice({ filters })
+                .then((usbDevice) => {
+                    if (usbDevice.productName.includes("Pico")) {
+                        setOfficialBuzzer(true);
+                    }
+                })
+                .catch(() => {});
+        } else {
+            setOfficialBuzzer(false);
+        }
     };
 
     return (
@@ -127,6 +148,7 @@ export default function Join() {
             >
                 GAME CODE:
                 <input
+                    type="text"
                     className={`${martianMono.className}`}
                     ref={codeRef}
                     onKeyDown={(e) => {
@@ -137,11 +159,20 @@ export default function Join() {
             <div className={`${raleway.className} ${styles.inputContainer}`}>
                 NICKNAME:
                 <input
+                    type="text"
                     className={`${martianMono.className}`}
                     ref={nicknameRef}
                     onKeyDown={(e) => {
                         e.key == "Enter" && handleJoin();
                     }}
+                ></input>
+            </div>
+            <div className={`${raleway.className} ${styles.inputContainer}`}>
+                USE OFFICIAL BUZZER:
+                <input
+                    type="checkbox"
+                    checked={officialBuzzer}
+                    onChange={handleOfficialBuzzer}
                 ></input>
             </div>
             <div className={styles.spacer}></div>

@@ -275,7 +275,6 @@ export default function Host() {
                 teamsBuzzedRef.current.sort((a, b) => {
                     return new Date(a.buzzTime) - new Date(b.buzzTime);
                 });
-                console.log(teamsBuzzedRef.current);
                 playBuzzAudio(teamsBuzzedRef.current[0].teamID);
                 setBuzzed(teamsBuzzedRef.current[0].teamID);
                 triggerEvent("confirmedBuzz", teamsBuzzedRef.current[0].teamID);

@@ -265,11 +265,16 @@ export default function Host() {
         const time = data.time;
         setTimerStarted(false);
         timerWorkerRef.current?.postMessage("end");
-        // Allow other buzzes within 500 ms to trickle in to adjust for latency
+        // Allow other buzzes within 200 ms to trickle in to adjust for latency
         if (!latencyRef.current) {
             // First buzz starts timer
             teamsBuzzedRef.current = [{ teamID: id, buzzTime: time }];
             clearTimeout(latencyRef.current);
+            audioRef.current = new Audio("/buzz.wav");
+            audioRef.current.play();
+            audioRef.current.onended = () => {
+                audioRef.current = null;
+            };
             latencyRef.current = setTimeout(() => {
                 // Sort by buzz time
                 teamsBuzzedRef.current.sort((a, b) => {
@@ -281,7 +286,7 @@ export default function Host() {
                 teamsBuzzedRef.current = null;
                 clearTimeout(latencyRef.current);
                 latencyRef.current = null;
-            }, 500);
+            }, 200);
         } else {
             teamsBuzzedRef.current = [
                 ...teamsBuzzedRef.current,
@@ -291,11 +296,6 @@ export default function Host() {
     };
 
     const playBuzzAudio = (id) => {
-        audioRef.current = new Audio("/buzz.wav");
-        audioRef.current.play();
-        audioRef.current.onended = () => {
-            audioRef.current = null;
-        };
         const msg = new SpeechSynthesisUtterance(
             `Team ${
                 teamsDictionary.current[id].number

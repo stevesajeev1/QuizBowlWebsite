@@ -38,7 +38,7 @@ This app was built using [Next.js](https://nextjs.org/) and is deployed on [Verc
 
 ## How to Use
 
-The app is currently live at [QuizBowlWebsite](https://quiz-bowl-website.vercel.app/). Here's how to use it:
+The app is currently live at https://quizbowl.vercel.app/. Here's how to use it:
 
 1. **Homepage**:
    - Visit the homepage to either join an existing game or create a new one.

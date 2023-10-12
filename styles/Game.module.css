@@ -57,8 +57,12 @@
 
 .round {
     margin-top: 20px;
-    margin-bottom: 20px;
     font-size: 50px;
+}
+
+.question {
+    font-size: 30px;
+    margin-bottom: 25px;
 }
 
 .buzzerContainer {

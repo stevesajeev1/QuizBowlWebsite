@@ -59,6 +59,8 @@ export default function Host() {
     const buzzerCheckedRef = useRef();
     buzzerCheckedRef.current = buzzerChecked;
 
+    const [question, setQuestion] = useState(0);
+
     const teamJoin = (team) => {
         const teamInfo = team.info;
         teamInfo.id = team.id;
@@ -499,6 +501,28 @@ export default function Host() {
         };
     }, [router.isReady]);
 
+    useEffect(() => {
+        let questionNumber = 0;
+        for (const team of teams) {
+            switch (round) {
+                case "5 Point Round":
+                    questionNumber += team.score.fiveCorrect;
+                    questionNumber += team.score.fiveIncorrect;
+                    break;
+                case "10 Point Round":
+                    questionNumber += team.score.tenCorrect;
+                    questionNumber += team.score.tenIncorrect;
+                    break;
+                case "15 Point Round":
+                    questionNumber += team.score.fifteenCorrect;
+                    questionNumber += team.score.fifteenIncorrect;
+                    break;
+            }
+        }
+        questionNumber++;
+        setQuestion(questionNumber);
+    }, [teams, round]);
+
     return (
         <div className="container">
             <Head>
@@ -530,9 +554,25 @@ export default function Host() {
                                 startRound(round);
                             }}
                         />
-                        <h1 className={`${raleway.className} ${styles.round}`}>
+                        <h1
+                            className={`${raleway.className} ${styles.round}`}
+                            style={{
+                                marginBottom:
+                                    round == "Buzzer Check" ||
+                                    round == "Team Questions"
+                                        ? 25
+                                        : -5,
+                            }}
+                        >
                             {round ? round : "Waiting for Next Round..."}
                         </h1>
+                        {round &&
+                            round != "Buzzer Check" &&
+                            round != "Team Questions" && (
+                                <h1
+                                    className={`${raleway.className} ${styles.question}`}
+                                >{`Question ${question}`}</h1>
+                            )}
                         {round && round != "Buzzer Check" && (
                             <>
                                 <Timer

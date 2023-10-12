@@ -301,7 +301,7 @@ export default function Host() {
         const msg = new SpeechSynthesisUtterance(
             `Team ${
                 teamsDictionary.current[id].number
-            }: ${teamsDictionary.current[id].nickname.slice(0, 20)}}`
+            }. ${teamsDictionary.current[id].nickname.slice(0, 20)}}`
         );
         msg.voice = speechSynthesisRef.current.getVoices()[6];
         speechSynthesisRef.current.speak(msg);

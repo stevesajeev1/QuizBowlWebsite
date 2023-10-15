@@ -267,7 +267,7 @@ export default function Host() {
         const time = data.time;
         setTimerStarted(false);
         timerWorkerRef.current?.postMessage("end");
-        // Allow other buzzes within 200 ms to trickle in to adjust for latency
+        // Allow other buzzes within 300 ms to trickle in to adjust for latency
         if (!latencyRef.current) {
             // First buzz starts timer
             teamsBuzzedRef.current = [{ teamID: id, buzzTime: time }];
@@ -288,7 +288,7 @@ export default function Host() {
                 teamsBuzzedRef.current = null;
                 clearTimeout(latencyRef.current);
                 latencyRef.current = null;
-            }, 200);
+            }, 300);
         } else {
             teamsBuzzedRef.current = [
                 ...teamsBuzzedRef.current,

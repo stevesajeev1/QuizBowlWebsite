@@ -58,6 +58,7 @@ function hostChannel(
     channel.bind("pusher:member_added", (member) => {
         teamJoinCallback(member);
     });
+
     // listen for member leave
     channel.bind("pusher:member_removed", (member) => {
         teamLeaveCallback(member);
@@ -118,7 +119,8 @@ function joinChannel(
     resetTimerCallback,
     buzzCallback,
     buzzTimerCallback,
-    pingCallback
+    pingCallback,
+    connectionCallback
 ) {
     // Initialize regular client
     channels = new Pusher(PUSHER_APP_KEY, {
@@ -180,6 +182,11 @@ function joinChannel(
             channel = null;
             kickCallback();
         }
+    });
+
+    // listen for connection issues
+    channels.connection.bind("state_change", (states) => {
+        connectionCallback(states);
     });
 
     // listen for buzz

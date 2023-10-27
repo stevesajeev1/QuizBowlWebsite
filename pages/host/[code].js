@@ -63,6 +63,41 @@ export default function Host() {
 
     const teamJoin = (team) => {
         const teamInfo = team.info;
+
+        if (teamInfo.isHost || teamInfo.isSpectating) {
+            return;
+        }
+
+        // Check if it is a reconnect or first join
+        let currentTeams = [...teamsRef.current];
+        for (let i = 0; i < currentTeams.length; i++) {
+            const currentTeam = currentTeams[i];
+            if (currentTeam.nickname == teamInfo.nickname) {
+                currentTeams[i].id = team.id;
+                setTeams(currentTeams);
+                if (timerStartedRef.current) {
+                    resetTimer();
+                }
+                if (roundRef.current == "Buzzer Check") {
+                    triggerEvent("update", {
+                        round: roundRef.current,
+                        teams: currentTeams,
+                        timer: initialTimerRef.current,
+                        buzzed: buzzedRef.current,
+                        buzzerChecked: buzzerCheckedRef.current,
+                    });
+                } else {
+                    triggerEvent("update", {
+                        round: roundRef.current,
+                        teams: currentTeams,
+                        timer: initialTimerRef.current,
+                        buzzed: buzzedRef.current,
+                    });
+                }
+                return;
+            }
+        }
+
         teamInfo.id = team.id;
         teamInfo.joinTime = new Date();
         teamInfo.score = {
@@ -75,25 +110,23 @@ export default function Host() {
             fifteenIncorrect: 0,
         };
 
-        if (!(teamInfo.isHost || teamInfo.isSpectating)) {
-            const newTeams = [...teamsRef.current, teamInfo];
-            setTeams(newTeams);
-            if (roundRef.current == "Buzzer Check") {
-                triggerEvent("update", {
-                    round: roundRef.current,
-                    teams: newTeams,
-                    timer: initialTimerRef.current,
-                    buzzed: buzzedRef.current,
-                    buzzerChecked: buzzerCheckedRef.current,
-                });
-            } else {
-                triggerEvent("update", {
-                    round: roundRef.current,
-                    teams: newTeams,
-                    timer: initialTimerRef.current,
-                    buzzed: buzzedRef.current,
-                });
-            }
+        currentTeams = [...teamsRef.current, teamInfo];
+        setTeams(currentTeams);
+        if (roundRef.current == "Buzzer Check") {
+            triggerEvent("update", {
+                round: roundRef.current,
+                teams: currentTeams,
+                timer: initialTimerRef.current,
+                buzzed: buzzedRef.current,
+                buzzerChecked: buzzerCheckedRef.current,
+            });
+        } else {
+            triggerEvent("update", {
+                round: roundRef.current,
+                teams: currentTeams,
+                timer: initialTimerRef.current,
+                buzzed: buzzedRef.current,
+            });
         }
     };
 

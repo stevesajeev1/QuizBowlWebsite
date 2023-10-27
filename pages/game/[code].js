@@ -8,6 +8,7 @@ import Teams from "../../components/Teams";
 import styles from "../../styles/Game.module.css";
 import Timer from "../../components/Timer";
 import Buzzer from "../../components/Buzzer";
+import Disconnected from "../../components/Disconnected";
 
 const raleway = Raleway({
     subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function Game() {
     const [timer, setTimer] = useState(60);
     const [buzzed, setBuzzed] = useState("buzz");
     const [ping, setPing] = useState([]);
+    const [connected, setConnected] = useState(true);
 
     const teamsRef = useRef();
     teamsRef.current = teams;
@@ -135,6 +137,14 @@ export default function Game() {
 
     const average = (array) => array.reduce((a, b) => a + b) / array.length;
 
+    const connection = (state) => {
+        if (state.current == "connecting") {
+            setConnected(false);
+        } else if (state.current == "connected") {
+            setConnected(true);
+        }
+    };
+
     useEffect(() => {
         if (!router.isReady) return;
 
@@ -155,7 +165,8 @@ export default function Game() {
             resetTimer,
             otherBuzz,
             buzzTimer,
-            updatePing
+            updatePing,
+            connection
         ).then((id) => {
             idRef.current = id;
         });
@@ -254,6 +265,7 @@ export default function Game() {
                                 (nickname.length > 20 ? "..." : "")}
                         </strong>
                     </h1>
+                    {!connected && <Disconnected />}
                 </header>
                 <hr className={styles.line}></hr>
                 <div className={styles.mainContainer}>

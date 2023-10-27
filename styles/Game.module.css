@@ -18,6 +18,7 @@
     font-weight: normal;
     text-align: center;
     font-size: 25px;
+    margin-bottom: 20px;
 }
 
 .line {
@@ -26,7 +27,6 @@
     border: 0;
     border-top: 3px solid var(--accent);
     padding: 0;
-    margin-top: 20px;
 }
 
 .mainContainer {

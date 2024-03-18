@@ -219,12 +219,12 @@ export default function Host() {
             setTimerStarted(false);
         }
         if (round == "Team Questions") {
-            setInitialTimer(120);
-            setTimer(120);
+            setInitialTimer(180);
+            setTimer(180);
             triggerEvent("update", {
                 round: round,
                 teams: teamsRef.current,
-                timer: 120,
+                timer: 180,
                 buzzed: buzzedRef.current,
             });
         } else {
